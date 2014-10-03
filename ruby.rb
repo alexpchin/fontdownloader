@@ -3,23 +3,13 @@ require 'nokogiri'
 require 'css_parser'
 require 'open-uri'
 require 'net/http'
-
 require 'net/ftp'
 require 'uri'
 require 'date'
-
 require 'pry'
 
-page = Nokogiri::HTML(open("https://generalassemb.ly"))
-doc =  page.xpath("/html/head")
-stylesheets = doc.xpath('//link[@rel="stylesheet"]').map { |link| link['href'] }
-
-def get_long_url(short_url)
-  if !short_url[/^http/]
-    "http:#{short_url}"
-  else
-    short_url
-  end
+def get_long_url(url, short_url)
+  url + short_url.gsub('http://', '').gsub('//', '')
 end
 
 def create_directory(dirname)
@@ -31,7 +21,6 @@ def create_directory(dirname)
 end
  
 def get_filename(url)
-
   uri = URI.parse(url)
   File.basename(uri.path) if !uri.path.nil?
 end
@@ -110,31 +99,40 @@ end
  
 def main(urls)
   uris = read_uris_from_file(urls)
- 
   target_dir_name = Date.today.strftime('%y%m%d')
   create_directory(target_dir_name)
   Dir.chdir(target_dir_name)
   puts "Changed directory: " + Dir.pwd
- 
   download_resources(uris)
 end
 
-stylesheets.each do |s| 
-  begin
-    link = get_long_url(s)
-    css = Nokogiri::HTML(open(link)).to_s
-    input_filenames = css.split(';').join('; ').scan(/src:url(\(.*?\.(?:eot|woff|ttf|svg))/).map do |s| 
-      v = s[0].delete!('()"')
-      get_long_url(s[0]) if v
-    end
-    
-    main(input_filenames)
+def run(url)
+  page = Nokogiri::HTML(open(url))
+  doc =  page.xpath("/html/head")
+  stylesheets = doc.xpath('//link[@rel="stylesheet"]').map { |link| link['href'] }
 
-  rescue OpenURI::HTTPError => e
-    if e.message == '404 Not Found'
-      # handle 404 error
-    else
-      raise e
+  stylesheets.each do |s| 
+    begin
+      link = get_long_url(url, s)
+      puts link
+      css = Nokogiri::HTML(open(link)).to_s
+      input_filenames = css.split(';').join('; ').scan(/src:url(\(.*?\.(?:eot|woff|ttf|svg))/).map do |s| 
+        v = s[0].delete!('()"')
+        get_long_url(url, s[0]) if v
+      end
+      
+      main(input_filenames)
+
+    rescue OpenURI::HTTPError => e
+      if e.message == '404 Not Found'
+        # handle 404 error
+      else
+        raise e
+      end
     end
   end
 end
+
+puts "What url?"
+url = gets.chomp
+run(url)
