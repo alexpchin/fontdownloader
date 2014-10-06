@@ -7,13 +7,14 @@ require 'open-uri'
 require './lib/downloadfonts'
 
 class FontDownloader < Sinatra::Base
+  include Download
 
   get '/' do
     haml :index
   end
 
   post '/' do
-    run params[:url]
+    Download::run params[:url]
   end
 
 end
