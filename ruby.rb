@@ -6,10 +6,21 @@ require 'net/http'
 require 'net/ftp'
 require 'uri'
 require 'date'
-require 'pry'
+
+require 'pry-byebug'
+require 'sinatra'
+require 'sinatra/reloader' if development?
 
 def get_long_url(url, short_url)
-  url + short_url.gsub('http://', '').gsub('//', '')
+  if !short_url[/^http/]
+    if short_url[/^\/\//]
+      "http:#{short_url}"
+    else 
+      url + short_url
+    end
+  else
+    short_url
+  end
 end
 
 def create_directory(dirname)
@@ -133,6 +144,10 @@ def run(url)
   end
 end
 
-puts "What url?"
-url = gets.chomp
-run(url)
+get '/' do
+  run(url)
+end
+
+post '/' do
+  run params[:url]
+end
