@@ -1,7 +1,9 @@
 require 'pry'
+require 'securerandom'
 
 module Download
-  class << self
+  # Metaclass to make all methods class methods
+  class << self 
 
     def get_long_url(url, short_url)
       if !short_url[/^http/]
@@ -103,36 +105,39 @@ module Download
     end
      
     def main(urls)
-      uris = read_uris_from_file(urls)
-      target_dir_name = Date.today.strftime('%y%m%d')
-
-      # Create a directory and return absolute path
-      path = create_directory(target_dir_name)
-
-      # Changes the current working directory of the process to the given string.
-      Dir.chdir(path)
       
-      puts "Changed directory: " + Dir.pwd
-      download_resources(uris)
     end
 
     def run(url)
+      # Open the desination url using Nokogiri
       page = Nokogiri::HTML(open(url))
+
+      # Select only the head.
       doc =  page.xpath("/html/head")
+
+      # Grab the stylsheets on the page
       stylesheets = doc.xpath('//link[@rel="stylesheet"]').map { |link| link['href'] }
 
+      # TO DO - remove
+      puts "FontDownloader has found #{stylesheets.count} stylesheets."
+
+      # Create an empty array to save file urls
+      input_filenames = []
+
+      # Parse each stylsheet and rip out the font file urls (eot|woff|ttf|svg)
       stylesheets.each do |s| 
         begin
           link = get_long_url(url, s)
           puts link
           css = Nokogiri::HTML(open(link)).to_s
-          input_filenames = css.split(';').join('; ').scan(/src:url(\(.*?\.(?:eot|woff|ttf|svg))/).map do |s| 
+          input_filenames += css.split(';').join('; ').scan(/src:url(\(.*?\.(?:eot|woff|ttf|svg))/).map do |s|
+
+            # TO DO, add into Regex 
             v = s[0].delete!('()"')
+
+            # Quick fix to solve problem of urls with // instead of http(s)
             get_long_url(url, s[0]) if v
           end
-          
-          main(input_filenames)
-
         rescue OpenURI::HTTPError => e
           if e.message == '404 Not Found'
             # handle 404 error
@@ -141,6 +146,36 @@ module Download
           end
         end
       end
+
+      # Ensure that the filenames are all uniq
+      input_filenames.uniq! if input_filenames
+
+      # Create an array of uri pairs [{ resource: "x", filename: "y" }] for each url
+      uris = read_uris_from_file(input_filenames)
+
+      # Create a directory name for this download
+      target_dir_name = Date.today.strftime('%y%m%d')
+
+      # Create securehex to add to this download
+      hex = SecureRandom.hex
+
+      # Create unique(ish) directory name using target_dir_name and hex
+      target_dir_name = "#{target_dir_name}-#{hex}"
+
+      # Create a directory and return absolute path
+      path = create_directory(target_dir_name)
+
+      # Changes the current working directory of the process to the given string.
+      Dir.chdir(path)
+      
+      # TO DO - remove
+      puts "Changed directory: " + Dir.pwd
+
+      # Download all the URLSs
+      download_resources(uris)
+
+      puts "**************************************************************"
+      puts "DONE"
     end
 
   end   
