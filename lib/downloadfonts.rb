@@ -1,16 +1,3 @@
-require 'rubygems'
-require 'nokogiri' 
-require 'css_parser'
-require 'open-uri'
-require 'net/http'
-require 'net/ftp'
-require 'uri'
-require 'date'
-
-require 'pry-byebug'
-require 'sinatra'
-require 'sinatra/reloader' if development?
-
 def get_long_url(url, short_url)
   if !short_url[/^http/]
     if short_url[/^\/\//]
@@ -142,12 +129,4 @@ def run(url)
       end
     end
   end
-end
-
-get '/' do
-  run(url)
-end
-
-post '/' do
-  run params[:url]
 end
