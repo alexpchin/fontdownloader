@@ -15,7 +15,11 @@ class FontDownloader < Sinatra::Base
 
   post '/' do
     target_dir_name = Download::run params[:url]
-    redirect "/uploads/#{target_dir_name}/#{target_dir_name}.zip"
+    if target_dir_name
+      redirect "/uploads/#{target_dir_name}/#{target_dir_name}.zip"
+    else
+      redirect "/"
+    end
   end
 
 end

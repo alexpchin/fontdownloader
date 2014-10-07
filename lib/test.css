@@ -13,3 +13,13 @@
  "ga-core-production-herokuapp-com.global.ssl.fastly.net/assets/PFDin/pfdintextcomppro-medium-webfont-47c2aa47f45fb0bd59881d014af3b5f4",
  "ga-core-production-herokuapp-com.global.ssl.fastly.net/assets/PFDin/pfdintextcomppro-medium-webfont-4a5044fb8033b258c88edde52d658dbb",
  "ga-core-production-herokuapp-com.global.ssl.fastly.net/assets/PFDin/pfdintextcomppro-medium-webfont"]
+
+
+ # This regex will grab all relevant filenames
+ # /\.(ttf|eot|svg|woff)(\?v=[0-9]\.[0-9]\.[0-9])?/
+ # \[(.*?)\] Everything beteen the square brackets
+ # Old (broken?) /src:url(\(.*?\.(?:eot|woff|ttf|svg))/
+ 
+ # New: \/\/(.*?)\.(?:eot|woff|ttf|svg)
+ # Problem, will grab everything after first //
+

@@ -6,17 +6,25 @@ module Download
   # Metaclass to make all methods class methods
   class << self 
 
-    # def get_long_url(url, short_url)
-    #   if !short_url[/^http/]
-    #     if short_url[/^\/\//]
-    #       "http:#{short_url}"
-    #     else 
-    #       url + short_url
-    #     end
-    #   else
-    #     short_url
-    #   end
-    # end
+    def get_long_url(url, short_url)
+      # if !short_url[/^http/]
+      #   if short_url[/^\/\//]
+      #     "http:#{short_url}"
+      #   else 
+      #     url + short_url
+      #   end
+      # else
+      #   short_url
+      # end
+
+      if !short_url.include?("http")
+        if short_url.include?("//")
+          "http:#{u}"
+        else
+          "#{url}#{u}"
+        end
+      end       
+    end
 
     def create_directory(dirname)
       path = File.expand_path("../../public/uploads/#{dirname}", __FILE__)
@@ -27,7 +35,7 @@ module Download
       end
       path
     end
-     
+
     def get_filename(url)
       uri = URI.parse(url)
       File.basename(uri.path) if !uri.path.nil?
@@ -40,7 +48,7 @@ module Download
         pair = { resource: url, filename: get_filename(url) }
       end
     end
-     
+
     def download_resource(resource, filename)
       uri = URI.parse(resource)
       case uri.scheme.downcase
@@ -52,7 +60,7 @@ module Download
         puts "Unsupported URI scheme for resource " + resource + "."
       end
     end
-     
+
     def http_download_uri(uri, filename)
       puts "Starting HTTP download for: " + uri.to_s
       http_object = Net::HTTP.new(uri.host, uri.port)
@@ -75,7 +83,7 @@ module Download
       end
       puts "Stored download as " + filename + "."
     end
-     
+
     def ftp_download_uri(uri, filename)
       puts "Starting FTP download for: " + uri.to_s + "."
       dirname = File.dirname(uri.path)
@@ -92,7 +100,7 @@ module Download
       end
       puts "Stored download as " + filename + "."
     end
-     
+
     def download_resources(pairs)
       pairs.each do |pair|
         filename = pair[:filename].to_s
@@ -124,138 +132,120 @@ module Download
     end
 
     # Array of font_faces
-    def grab_font_urls(font_faces)
+    def grab_font_urls(url, font_faces)
 
       # Grab URLS out of @font-face
-      input_filenames = font_faces.map do |font|
+      font_faces.map do |font|
 
         # Grab all urls after http (also catches https)
-        font.scan(/http(.*?)\.(?:eot|woff|ttf|svg)/)
+        http = font.scan(/http(.*?)\.(?:eot|woff|ttf|svg)/)
 
         # Grab all urls after // or /
-        font.scan(/\/(.*?)\.(?:eot|woff|ttf|svg)/).map |u|
-          
-          # Only if url doesn't include http or https 
-          if !u.include?("http")
-            if u.include?(//)
-              "http:#{u}"
-            else
-              "#{url}#{u}"
-            end
-          end 
+        no_http = font.scan(/\/(.*?)\.(?:eot|woff|ttf|svg)/)
 
+        # Only if url doesn't include http or https 
+        http += no_http.map do |u|
+          get_long_url(url, u)
         end.flatten!
 
       end
-
-binding.pry
-
     end
 
     def run(url)
       # Open the desination url using Nokogiri
       page = Nokogiri::HTML(open(url))
 
-      # Select only the head.
-      doc =  page.xpath("/html/head")
+      # Select only the head for speed.
+      doc = page.xpath("/html/head")
 
-      # Grab the stylsheets on the page
+      # Grab the stylsheets urls on the page
       stylesheets = doc.xpath('//link[@rel="stylesheet"]').map { |link| link['href'] }
 
-      # TO DO - remove
+      # Just for use in the terminal
       puts "FontDownloader has found #{stylesheets.count} stylesheets."
 
-      # Create an empty array to save file urls
-      input_filenames = []
+      if stylesheets
 
-      # Parse each stylsheet and rip out the font file urls (eot|woff|ttf|svg)
-      stylesheets.each do |s| 
-        begin
-          link = get_long_url(url, s)
-          
-          puts link
-          
-          css = Nokogiri::HTML(open(link)).to_s
+        # Parse each stylsheet and rip out the font file urls (eot|woff|ttf|svg)
+        stylesheets.each do |s| 
+          begin
 
-          # This regex will grab all relevant filenames
-          # /\.(ttf|eot|svg|woff)(\?v=[0-9]\.[0-9]\.[0-9])?/
-          # \[(.*?)\] Everything beteen the square brackets
-          # Old (broken?) /src:url(\(.*?\.(?:eot|woff|ttf|svg))/
-          
-          # New: \/\/(.*?)\.(?:eot|woff|ttf|svg)
-          # Problem, will grab everything after first //
+            # Build long url for stylesheet
+            link = get_long_url(url, s)
+            
+            # Show stylesheet link in terminal
+            puts "Stylesheet #{link}"
+              
+            # Open-Uri
+            css = open(link)
 
-          # Beautify css
-          css = css.split(';').join('; ')
+            # Open stylsheet using Nokogiri
+            css = Nokogiri::HTML(css).to_s
 
-          # Grab all @font-face declarations
-          font_faces = css.scan(/@font-face[^}]*\}/)
+            # Beautify css
+            css = css.split(';').join('; ')
 
-          input_filenames = grab_font_urls(url, font_faces)
+            # Grab all @font-face declarations
+            font_faces = css.scan(/@font-face[^}]*\}/)
 
-          # input_filenames.map do { |filename| 
-          #   get_long_url(filename
-          # end
+            if font_faces
+              # Input filenames
+              input_filenames = grab_font_urls(url, font_faces)
+            else
+              # To do = raiseError
+              return false
+            end
 
-          # Grab URLS out of @font-face
-          # input_filenames = fontfaces.map do |font| 
-
-          #   font.scan(/\/\/(.*?)\.(?:eot|woff|ttf|svg)/).map do |s|
-          #     # TO DO, add into Regex 
-          #     v = s[0].delete!('()"')
-
-          #     # Quick fix to solve problem of urls with // instead of http(s)
-          #     get_long_url(url, s[0]) if v
-          #   end
-
-          # end
-
-        rescue OpenURI::HTTPError => e
-          if e.message == '404 Not Found'
-            # handle 404 error
-          else
-            raise e
+          rescue OpenURI::HTTPError => e
+            if e.message == '404 Not Found'
+              # handle 404 error
+            else
+              raise e
+            end
           end
         end
+
+        # Ensure that the filenames are all uniq
+        input_filenames.uniq! if input_filenames
+  binding.pry
+
+        # Create an array of uri pairs [{ resource: "x", filename: "y" }] for each url
+        uris = read_uris_from_file(input_filenames)
+
+        # Create a directory name for this download
+        target_dir_name = Date.today.strftime('%y%m%d')
+
+        # Create securehex to add to this download
+        hex = SecureRandom.hex
+
+        # Create unique(ish) directory name using target_dir_name and hex
+        target_dir_name = "#{target_dir_name}-#{hex}"
+
+        # Create a directory and return absolute path
+        path = create_directory(target_dir_name)
+
+        # Changes the current working directory of the process to the given string.
+        Dir.chdir(path)
+        
+        # TO DO - remove
+        puts "Changed directory: " + Dir.pwd
+
+        # Download all the URLSs
+        download_resources(uris)
+
+        # Build array of filenames on server
+        # TO DO = uniq! Should happen further up this process
+        input_filenames = uris.map { |file| file[:filename] }.uniq!
+
+        # Zip the directory (folder, input_filenames, zipfile_name)
+        zip_file(Dir.pwd, input_filenames, "#{target_dir_name}.zip")
+
+        # Return zip name to controller
+        "#{target_dir_name}"
+
+      else
+        return false
       end
-
-      # Ensure that the filenames are all uniq
-      input_filenames.uniq! if input_filenames
-
-      # Create an array of uri pairs [{ resource: "x", filename: "y" }] for each url
-      uris = read_uris_from_file(input_filenames)
-
-      # Create a directory name for this download
-      target_dir_name = Date.today.strftime('%y%m%d')
-
-      # Create securehex to add to this download
-      hex = SecureRandom.hex
-
-      # Create unique(ish) directory name using target_dir_name and hex
-      target_dir_name = "#{target_dir_name}-#{hex}"
-
-      # Create a directory and return absolute path
-      path = create_directory(target_dir_name)
-
-      # Changes the current working directory of the process to the given string.
-      Dir.chdir(path)
-      
-      # TO DO - remove
-      puts "Changed directory: " + Dir.pwd
-
-      # Download all the URLSs
-      download_resources(uris)
-
-      # Build array of filenames on server
-      # TO DO = uniq! Should happen further up this process
-      input_filenames = uris.map { |file| file[:filename] }.uniq!
-
-      # Zip the directory (folder, input_filenames, zipfile_name)
-      zip_file(Dir.pwd, input_filenames, "#{target_dir_name}.zip")
-
-      # Return zip name to controller
-      "#{target_dir_name}"
     end
-
   end   
 end
