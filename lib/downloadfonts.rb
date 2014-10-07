@@ -1,5 +1,6 @@
 require 'pry'
 require 'securerandom'
+require 'zip'
 
 module Download
   # Metaclass to make all methods class methods
@@ -103,9 +104,23 @@ module Download
         end
       end
     end
-     
-    def main(urls)
-      
+
+    def zip_file(folder, input_filenames, zipfile_name)
+
+      # Create a new zipped directory
+      Zip::File.open(zipfile_name, Zip::File::CREATE) do |zipfile|
+
+        input_filenames.each do |filename|
+          # Two arguments: (new_file_name, original_file_path)
+          # - The name of the file as it will appear in the archive
+          # - The original file, including the path to find it
+          zipfile.add(filename, "#{folder}/#{filename}")
+        end
+
+        # If you want to generate a README ?
+        # zipfile.get_output_stream("myFile") { |os| os.write "myFile contains just this" }
+
+      end
     end
 
     def run(url)
@@ -174,8 +189,15 @@ module Download
       # Download all the URLSs
       download_resources(uris)
 
-      puts "**************************************************************"
-      puts "DONE"
+      # Build array of filenames on server
+      # TO DO = uniq! Should happen further up this process
+      input_filenames = uris.map { |file| file[:filename] }.uniq!
+
+      # Zip the directory (folder, input_filenames, zipfile_name)
+      zip_file(Dir.pwd, input_filenames, "#{target_dir_name}.zip")
+
+      # Return zip name to controller
+      "#{target_dir_name}"
     end
 
   end   

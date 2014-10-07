@@ -4,6 +4,10 @@ gem 'sinatra'
 gem 'nokogiri' 
 gem 'css_parser'
 gem 'haml'
+gem 'rubyzip'
+
+# gem 'rack-flash3'
+# gem 'sinatra-redirect-with-flash'
 
 group :test, :development do
   gem 'pry-byebug'
