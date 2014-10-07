@@ -6,17 +6,17 @@ module Download
   # Metaclass to make all methods class methods
   class << self 
 
-    def get_long_url(url, short_url)
-      if !short_url[/^http/]
-        if short_url[/^\/\//]
-          "http:#{short_url}"
-        else 
-          url + short_url
-        end
-      else
-        short_url
-      end
-    end
+    # def get_long_url(url, short_url)
+    #   if !short_url[/^http/]
+    #     if short_url[/^\/\//]
+    #       "http:#{short_url}"
+    #     else 
+    #       url + short_url
+    #     end
+    #   else
+    #     short_url
+    #   end
+    # end
 
     def create_directory(dirname)
       path = File.expand_path("../../public/uploads/#{dirname}", __FILE__)
@@ -123,6 +123,35 @@ module Download
       end
     end
 
+    # Array of font_faces
+    def grab_font_urls(font_faces)
+
+      # Grab URLS out of @font-face
+      input_filenames = font_faces.map do |font|
+
+        # Grab all urls after http (also catches https)
+        font.scan(/http(.*?)\.(?:eot|woff|ttf|svg)/)
+
+        # Grab all urls after // or /
+        font.scan(/\/(.*?)\.(?:eot|woff|ttf|svg)/).map |u|
+          
+          # Only if url doesn't include http or https 
+          if !u.include?("http")
+            if u.include?(//)
+              "http:#{u}"
+            else
+              "#{url}#{u}"
+            end
+          end 
+
+        end.flatten!
+
+      end
+
+binding.pry
+
+    end
+
     def run(url)
       # Open the desination url using Nokogiri
       page = Nokogiri::HTML(open(url))
@@ -143,16 +172,44 @@ module Download
       stylesheets.each do |s| 
         begin
           link = get_long_url(url, s)
+          
           puts link
+          
           css = Nokogiri::HTML(open(link)).to_s
-          input_filenames += css.split(';').join('; ').scan(/src:url(\(.*?\.(?:eot|woff|ttf|svg))/).map do |s|
 
-            # TO DO, add into Regex 
-            v = s[0].delete!('()"')
+          # This regex will grab all relevant filenames
+          # /\.(ttf|eot|svg|woff)(\?v=[0-9]\.[0-9]\.[0-9])?/
+          # \[(.*?)\] Everything beteen the square brackets
+          # Old (broken?) /src:url(\(.*?\.(?:eot|woff|ttf|svg))/
+          
+          # New: \/\/(.*?)\.(?:eot|woff|ttf|svg)
+          # Problem, will grab everything after first //
 
-            # Quick fix to solve problem of urls with // instead of http(s)
-            get_long_url(url, s[0]) if v
-          end
+          # Beautify css
+          css = css.split(';').join('; ')
+
+          # Grab all @font-face declarations
+          font_faces = css.scan(/@font-face[^}]*\}/)
+
+          input_filenames = grab_font_urls(url, font_faces)
+
+          # input_filenames.map do { |filename| 
+          #   get_long_url(filename
+          # end
+
+          # Grab URLS out of @font-face
+          # input_filenames = fontfaces.map do |font| 
+
+          #   font.scan(/\/\/(.*?)\.(?:eot|woff|ttf|svg)/).map do |s|
+          #     # TO DO, add into Regex 
+          #     v = s[0].delete!('()"')
+
+          #     # Quick fix to solve problem of urls with // instead of http(s)
+          #     get_long_url(url, s[0]) if v
+          #   end
+
+          # end
+
         rescue OpenURI::HTTPError => e
           if e.message == '404 Not Found'
             # handle 404 error
