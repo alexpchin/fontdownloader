@@ -59,6 +59,7 @@ DEPENDENCIES
   haml
   nokogiri
   pry-byebug
+  rack
   rubyzip
   sidekiq
   sidekiq-failures

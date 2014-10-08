@@ -1,6 +1,5 @@
 /public/uploads/*
 
-
 *.gem
 *.rbc
 /.config
