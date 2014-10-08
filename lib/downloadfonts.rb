@@ -1,29 +1,23 @@
 require 'pry'
 require 'securerandom'
 require 'zip'
+require 'open-uri'
 
 module Download
   # Metaclass to make all methods class methods
   class << self 
 
+    # [/^http/], [/^\/\//]
     def get_long_url(url, short_url)
-      # if !short_url[/^http/]
-      #   if short_url[/^\/\//]
-      #     "http:#{short_url}"
-      #   else 
-      #     url + short_url
-      #   end
-      # else
-      #   short_url
-      # end
-
-      if !short_url.include?("http")
+      if !short_url.include?("http")     
         if short_url.include?("//")
-          "http:#{u}"
-        else
-          "#{url}#{u}"
+          "http:#{short_url}"
+        else 
+          "#{url}#{short_url}"
         end
-      end       
+      else
+        "#{short_url}"
+      end
     end
 
     def create_directory(dirname)
@@ -137,21 +131,18 @@ module Download
       # Grab URLS out of @font-face
       font_faces.map do |font|
 
-        # Grab all urls after http (also catches https)
-        http = font.scan(/http(.*?)\.(?:eot|woff|ttf|svg)/)
+        # Anything between the brackets
+        array = font.scan(/(?:\(['|"]?)(.*?)(?:['|"]?\))/)
 
-        # Grab all urls after // or /
-        no_http = font.scan(/\/(.*?)\.(?:eot|woff|ttf|svg)/)
-
-        # Only if url doesn't include http or https 
-        http += no_http.map do |u|
-          get_long_url(url, u)
-        end.flatten!
-
+        # If array is not empty
+        if array.any?
+          array.flatten.map { |f| f if f[/.eot|.woff|.ttf|.svg/] }.compact
+        end
       end
     end
 
     def run(url)
+
       # Open the desination url using Nokogiri
       page = Nokogiri::HTML(open(url))
 
@@ -164,23 +155,23 @@ module Download
       # Just for use in the terminal
       puts "FontDownloader has found #{stylesheets.count} stylesheets."
 
+      # Create an array to shovel in font urls
+      input_filenames = []
+
       if stylesheets
 
         # Parse each stylsheet and rip out the font file urls (eot|woff|ttf|svg)
         stylesheets.each do |s| 
-          begin
 
+          begin
             # Build long url for stylesheet
             link = get_long_url(url, s)
             
             # Show stylesheet link in terminal
             puts "Stylesheet #{link}"
-              
-            # Open-Uri
-            css = open(link)
 
             # Open stylsheet using Nokogiri
-            css = Nokogiri::HTML(css).to_s
+            css = Nokogiri::HTML(open(link)).to_s
 
             # Beautify css
             css = css.split(';').join('; ')
@@ -189,10 +180,13 @@ module Download
             font_faces = css.scan(/@font-face[^}]*\}/)
 
             if font_faces
+              
               # Input filenames
-              input_filenames = grab_font_urls(url, font_faces)
+              font_urls = grab_font_urls(url, font_faces).flatten
+            
+              input_filenames << font_urls.map { |file|  get_long_url(url, file) }
+
             else
-              # To do = raiseError
               return false
             end
 
@@ -205,9 +199,10 @@ module Download
           end
         end
 
+        input_filenames.flatten!
+
         # Ensure that the filenames are all uniq
         input_filenames.uniq! if input_filenames
-  binding.pry
 
         # Create an array of uri pairs [{ resource: "x", filename: "y" }] for each url
         uris = read_uris_from_file(input_filenames)
