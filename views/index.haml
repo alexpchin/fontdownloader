@@ -1,7 +1,11 @@
-%h1 Welcome 
-%h1= @hello
 %form{action: "", method: "post"}
   %fieldset
     %label{:for => "url"} Name:
-    %input{:type => "text", :name => "url"}
+    %input{:type => "text", :name => "url", class: "search", placeholder: "Search a url for fonts"}
     %input{:type => "submit", :value => "Send"}
+
+%p FontDownloader allows you to input a url and download the fonts that are embedded in that website's stylesheet. FontDownloader should only be used to download fonts that you are allowed to access.
+
+%pre
+  %code.language-css
+    = @css

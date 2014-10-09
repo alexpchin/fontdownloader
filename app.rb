@@ -11,6 +11,7 @@ class App < Sinatra::Base
   include Download
 
   get '/' do
+    @css = File.open("#{File.dirname(__FILE__)}/public/assets/font-face.css", "rb").read
     haml :index
   end
 

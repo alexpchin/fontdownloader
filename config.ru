@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'bundler'
 require './app'
-require_relative './lib/assets'
+require './lib/assets'
 
 Bundler.require(:default)
 

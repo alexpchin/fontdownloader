@@ -1,43 +1,111 @@
 $site-max-width: 960px;
 $nav-height: 60px;
 
-$blue: #225378;
-$light-blue: #1695a3;
-$lighter-blue: #acf0f2;
-$background: #f3ffe2;
-$orange: #eb7f00; 
+$white: #FFFFFF;
+$darkslategray: #2C3E50;
+$light-blue: #2980B9;
+$lighter-blue: #3498DB;
+$background: #ECF0F1;
+$orange: #E74C3C; 
+$margin-unit: 1em;
 
-body {
+*{
+  box-sizing: border-box;
+}
 
-  header {
-    margin: 0 auto;
-    width: 100%;
-    height: $nav-height;
-    line-height: $nav-height;
-    background: $blue;
+html, body {
+  height: 100%;
+  line-height: 1.5em;
+  background: $background;
 
-    nav {
-      max-width: $site-max-width;
+  // Typography
+  h1, h2, h3, h4, h5, h6 {
+
+  }
+
+  h1 {
+    font-size: 2.5em;
+  }
+
+  h2 {
+    font-size: 2.5em;
+  }
+
+  h3 {
+    font-size: 2.4em;
+  }
+
+  h4 {
+    font-size: 2.4em;
+  }
+
+  h5 {
+    font-size: 2em;
+  }
+
+  h6 {
+    font-size: 1.5em;
+  }
+
+  // Inputs
+  input {
+    padding: 0 0.5em;
+    display: block;
+
+    &.search {
+      height: 3em; 
+      min-width: 300px;
+      max-width: 500px;
+    }
+  }
+
+  .wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -155px;
+
+    header {
+      width: 100%;
+      height: $nav-height;
       line-height: $nav-height;
+      background: $orange;
+      margin: 0 auto $margin-unit;
 
-      ul {
-        li {
-          a {
+      nav {
+        margin: 0 auto;
+        max-width: $site-max-width;
+        line-height: $nav-height;
 
+        ul {
+          li {
+            a {
+              text-decoration: none;
+              color: $white;
+            }
           }
         }
       }
     }
-  }
 
-  main {
-    margin: 0 auto;
-    max-width: $site-max-width;
+    main {
+      margin: 0 auto;
+      max-width: $site-max-width;
+    }
+
+    .push {
+      height: 155px;
+    }
+
   }
 
   footer {
+    background: $light-blue;
+    height: 155px;
     margin: 0 auto;
-    max-width: $site-max-width;
-  }
 
+    nav {
+      max-width: $site-max-width;
+    }
+  }
 }

@@ -18,14 +18,19 @@
     -# = flash.each do |key, value|
     -#   = value
 
-    %header 
-      %nav
-        %ul 
-          %li 
-            %a.logo{:href => "/"} Font Downloader
+    .wrapper 
+      %header 
+        %nav
+          %ul 
+            %li 
+              %h1 
+                %a.logo{:href => "/"} Font Downloader
 
+      %main
+        = yield
 
-    %main
-      = yield
+      .push
+
+    %footer
 
     %script{src: '/assets/app.js' }

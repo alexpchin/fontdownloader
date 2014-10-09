@@ -4,17 +4,27 @@ source 'https://rubygems.org'
 ruby '2.1.2'
 
 gem 'sinatra'
+
+# Parse CSS
 gem 'nokogiri' 
 gem 'css_parser'
+
+# Zip files
 gem 'rubyzip'
-gem 'haml'
+
+# Compression & display
 gem 'sprockets'
 gem 'yui-compressor'
 gem 'coffee-script'
 gem 'sass'
+gem 'haml'
+
+# Syntax highlighting
+gem 'glorify'
 
 # gem 'sidekiq'
 # gem 'sidekiq-failures'
+
 # gem 'rack-flash3'
 # gem 'sinatra-redirect-with-flash'
 
