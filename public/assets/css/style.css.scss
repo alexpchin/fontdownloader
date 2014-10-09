@@ -1,0 +1,43 @@
+$site-max-width: 960px;
+$nav-height: 60px
+
+$blue: #225378;
+$light-blue: #1695a3;
+$lighter-blue: #acf0f2;
+$background: #f3ffe2;
+$orange: #eb7f00; 
+
+body {
+
+  header {
+    margin: 0 auto;
+    width: 100%;
+    height: $nav-height;
+    line-height: $nav-height;
+    background: $blue;
+
+    nav {
+      max-width: $site-max-width;
+      line-height: $nav-height;
+
+      ul {
+        li {
+          a {
+
+          }
+        }
+      }
+    }
+  }
+
+  main {
+    margin: 0 auto;
+    max-width: $site-max-width;
+  }
+
+  footer {
+    margin: 0 auto;
+    max-width: $site-max-width;
+  }
+
+}
