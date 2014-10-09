@@ -1,4 +1,3 @@
-require 'pry' if development?
 require 'securerandom'
 require 'zip'
 require 'open-uri'
