@@ -1,4 +1,4 @@
-require 'sinatra'
+require 'sinatra/base'
 require 'uri'
 require 'net/http'
 require 'date'
