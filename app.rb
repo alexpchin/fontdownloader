@@ -1,3 +1,4 @@
+require 'sinatra'
 require 'uri'
 require 'net/http'
 require 'date'
