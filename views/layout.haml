@@ -11,8 +11,7 @@
     %meta{content: "", name: "description"}/
     %meta{content: "", name: "author"}/
     %meta{content: "width=device-width,initial-scale=1", name: "viewport"}/
-    %link{content: "/assets/css/reset.css", rel: "stylesheet"}/
-    %link{content: "/assets/css/style.css", rel: "stylesheet"}/
+    %link{href: "/assets/app.css", rel: "stylesheet"}/
     %title Font Downloader - Grab downloadable fonts from any website
 
   %body
@@ -29,4 +28,4 @@
     %main
       = yield
 
-
+    %script{src: '/assets/app.js' }

@@ -6,7 +6,8 @@ require 'net/ftp'
 require 'open-uri'
 require './lib/downloadfonts'
 
-class FontDownloader < Sinatra::Base
+class App < Sinatra::Base
+  set :root, File.dirname(__FILE__)
   include Download
 
   get '/' do
