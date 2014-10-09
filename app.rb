@@ -1,5 +1,4 @@
 require 'sinatra/base'
-require 'sinatra/reloader'
 require 'uri'
 require 'date'
 require 'net/http'
@@ -8,11 +7,6 @@ require 'open-uri'
 require './lib/downloadfonts'
 
 class FontDownloader < Sinatra::Base
-
-  configure :development do
-    register Sinatra::Reloader
-  end
-
   include Download
 
   get '/' do
