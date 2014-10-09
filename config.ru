@@ -1,2 +1,2 @@
 require './app'
-run FontDownloader
+run Sinatra::Application
