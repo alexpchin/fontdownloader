@@ -3,15 +3,14 @@ source "https://rubygems.org"
 
 ruby '2.1.2'
 
-gem 'rack'
 gem 'sinatra'
 gem 'nokogiri' 
 gem 'css_parser'
 gem 'haml'
 gem 'rubyzip'
 
-gem 'sidekiq'
-gem 'sidekiq-failures'
+# gem 'sidekiq'
+# gem 'sidekiq-failures'
 
 # gem 'rack-flash3'
 # gem 'sinatra-redirect-with-flash'
