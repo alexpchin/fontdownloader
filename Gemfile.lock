@@ -42,6 +42,7 @@ DEPENDENCIES
   css_parser
   haml
   nokogiri
+  pry
   pry-byebug
   rubyzip
   sinatra
