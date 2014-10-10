@@ -27,8 +27,9 @@ gem 'glorify'
 gem 'sidekiq'
 gem 'sidekiq-failures'
 
-# gem 'rack-flash3'
-# gem 'sinatra-redirect-with-flash'
+# Sinatra flash
+gem 'sinatra-flash'
+gem 'sinatra-redirect-with-flash'
 
 group :test, :development do
   gem 'pry'
