@@ -8,7 +8,7 @@ Font Downloader allows you to input any url and download the fonts that are embe
 
 ## What will I get?
 
-Once Font Downloader has looked through the URL, it will download them, zip them up and send them to you. 
+Once Font Downloader has looked through the URL's stylesheets, it will download any fonts it finds, zip them up and send them to you.
 
 ## How to include the fonts?
 Once you have downloaded the zip file of the fonts from the URL (if there are any), then this is the most common way to include a custom font in CSS:

@@ -1,6 +1,3 @@
-require 'open-uri'
-require './lib/workers/font_worker'
-
 module Download
   # Metaclass to make all methods class methods
   class << self 
@@ -113,7 +110,7 @@ module Download
         input_filenames.uniq! if input_filenames
 
         # Download the fonts with Sidekiq
-        # FontWorker.perform_async(input_filenames)
+        FontWorker.perform_async(input_filenames)
 
       else
         return false

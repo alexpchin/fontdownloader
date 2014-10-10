@@ -1,6 +1,3 @@
-require 'securerandom'
-require 'zip'
-
 class FontWorker
   include Sidekiq::Worker
 
