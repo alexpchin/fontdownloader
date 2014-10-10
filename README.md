@@ -1,9 +1,8 @@
-[![Code Climate](https://codeclimate.com/github/alexpchin/fontdownloader/badges/gpa.svg)](https://codeclimate.com/github/alexpchin/fontdownloader)
-
-[![Test Coverage](https://codeclimate.com/github/alexpchin/fontdownloader/badges/coverage.svg)](https://codeclimate.com/github/alexpchin/fontdownloader)
-
 Font Downloader
 ===============
+[![Code Climate](https://codeclimate.com/github/alexpchin/fontdownloader/badges/gpa.svg)](https://codeclimate.com/github/alexpchin/fontdownloader) 
+[![Test Coverage](https://codeclimate.com/github/alexpchin/fontdownloader/badges/coverage.svg)](https://codeclimate.com/github/alexpchin/fontdownloader)
+
 
 Font Downloader allows you to input any url and download the fonts that are embedded in that website's stylesheet. Font Downloader should only be used to download fonts that you are allowed to access.
 
