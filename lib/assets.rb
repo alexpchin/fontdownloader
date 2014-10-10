@@ -30,10 +30,11 @@ module FontDownloader
     end
 
     %w{jpg png ico}.each do |format|
-      get "/assets/:image.#{format}" do |image|
+      get "/:image.#{format}" do |image|
         content_type("image/#{format}")
         settings.assets["#{image}.#{format}"]
       end
     end
+
   end
 end
