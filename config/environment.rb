@@ -17,18 +17,23 @@ require 'securerandom'
 require 'zip'
 require 'sidekiq/web'
 require 'nokogiri'
+require 'sass'
+require 'haml'
 
 # Some helper constants for path-centric logic
 APP_ROOT = Pathname.new(File.expand_path('../../', __FILE__))
 APP_NAME = APP_ROOT.basename.to_s
 
-# Set up the controllers and helpers
+# Set up the app files
 Dir[APP_ROOT.join('app', '*.rb')].each { |file| require file }
 
 # Setup Sidekiq
 Sidekiq.configure_client do |config|
   config.redis = { :size => 1 }
 end
+
+# Set up the sidekiq workers
+Dir[APP_ROOT.join('app', 'workers', '*.rb')].each { |file| require file }
 
 # Set up the database and models
 # require APP_ROOT.join('config', 'database')

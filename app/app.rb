@@ -2,7 +2,6 @@ module FontDownloader
   class App < Sinatra::Base
     register Sinatra::Flash
     helpers Sinatra::RedirectWithFlash
-    # include Download
     
     configure do
       # Set the views location
