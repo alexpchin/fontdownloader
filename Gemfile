@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 
 ruby '2.1.2'
 
+gem 'rake'
 gem 'sinatra'
 
 # Parse CSS
@@ -22,8 +23,9 @@ gem 'haml'
 # Syntax highlighting
 gem 'glorify'
 
-# gem 'sidekiq'
-# gem 'sidekiq-failures'
+# Sidekiq
+gem 'sidekiq'
+gem 'sidekiq-failures'
 
 # gem 'rack-flash3'
 # gem 'sinatra-redirect-with-flash'

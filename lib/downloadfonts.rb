@@ -224,7 +224,7 @@ module Download
         # TO DO - remove
         puts "Changed directory: " + Dir.pwd
 
-        # Download all the URLSs
+        # Download all the Files from the urls
         download_resources(uris)
 
         # Build array of filenames on server

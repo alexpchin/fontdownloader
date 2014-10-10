@@ -1,9 +1,11 @@
-require 'rubygems'
-require 'bundler'
-require './app'
-require './lib/assets'
+#!/usr/bin/env rackup
+# encoding: utf-8
 
-Bundler.require(:default)
+require File.expand_path("../config/boot.rb", __FILE__)
 
-use Assets
-run App
+# Using Rack URLMap for multiple Sinatra apps
+run Rack::URLMap.new({
+  "/"       => FontDownloader::App,
+  "/admin"  => FontDownloader::Sidekiq,
+  "/assets" => FontDownloader::Assets
+})
