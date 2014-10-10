@@ -4,6 +4,9 @@ require 'rubygems' unless defined?(Gem)
 require 'bundler/setup'
 Bundler.require(:default, ENV["RACK_ENV"].to_sym)
 
-Dir["./lib/**/*.rb"].each { |f| require f }
+require 'sidekiq/web'
+Sidekiq.configure_client do |config|
+  config.redis = { :size => 1 }
+end
 
-# use Assets
+Dir["./lib/**/*.rb"].each { |f| require f }
