@@ -17,18 +17,19 @@ module FontDownloader
       })
     end
 
-    # Will be prefixed by assets
+    # Will be prefixed by /assets/
     get "/app.js" do
       content_type("application/javascript")
       settings.assets["app.js"]
     end
 
-    # Will be prefixed by assets
+    # Will be prefixed by /assets/
     get "/app.css" do
       content_type("text/css")
       settings.assets["app.css"]
     end
 
+    # Will be prefixed by /assets/
     %w{jpg png ico}.each do |format|
       get "/:image.#{format}" do |image|
         content_type("image/#{format}")

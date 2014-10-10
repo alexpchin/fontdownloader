@@ -1,8 +1,10 @@
 # Gemfile
 source 'https://rubygems.org'
 
+# Ruby version
 ruby '2.1.2'
 
+# Rake & Sinatra
 gem 'rake'
 gem 'sinatra'
 

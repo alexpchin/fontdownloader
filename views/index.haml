@@ -6,14 +6,20 @@
 
 %form{action: "", method: "post"}
   %fieldset
-    %input{:type => "text", :name => "url", class: "search", placeholder: "Search a url for fonts"}
+    %input{:type => "text", :name => "url", class: "search", placeholder: "Search a URL for fonts"}
     %input{:type => "submit", :value => "Grab fonts"}
+
+%hr
+
+%h2 What will I get?
+%p
+  Once Font Downloader has looked through the URL, it will download them, zip them up and send them to you. 
 
 %hr
 
 %h2 How to include the fonts?
 %p 
-  Once you have downloaded the zip file of the fonts from the url (if there are any), then this is the most common way to include a custom font in CSS:
+  Once you have downloaded the zip file of the fonts from the URL (if there are any), then this is the most common way to include a custom font in CSS:
 
 %pre
   %code.language-css
