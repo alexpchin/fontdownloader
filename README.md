@@ -1,3 +1,7 @@
+[![Code Climate](https://codeclimate.com/github/alexpchin/fontdownloader/badges/gpa.svg)](https://codeclimate.com/github/alexpchin/fontdownloader)
+
+[![Test Coverage](https://codeclimate.com/github/alexpchin/fontdownloader/badges/coverage.svg)](https://codeclimate.com/github/alexpchin/fontdownloader)
+
 Font Downloader
 ===============
 
