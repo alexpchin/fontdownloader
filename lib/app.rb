@@ -19,6 +19,7 @@ module FontDownloader
 
     get '/' do
       @css = File.open(settings.root + "/public/assets/font-face.css", "rb").read
+      @woff = File.open(settings.root + "/public/assets/woff.css", "rb").read
       haml :index
     end
 

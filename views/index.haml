@@ -1,10 +1,27 @@
 %form{action: "", method: "post"}
   %fieldset
     %input{:type => "text", :name => "url", class: "search", placeholder: "Search a url for fonts"}
-    %input{:type => "submit", :value => "Send"}
+    %input{:type => "submit", :value => "Grab fonts"}
 
-%p FontDownloader allows you to input a url and download the fonts that are embedded in that website's stylesheet. FontDownloader should only be used to download fonts that you are allowed to access.
+%p 
+  %a{href: "/"} Font Downloader 
+  allows you to input any url and download the fonts that are embedded in that website's stylesheet. 
+  %a{href: "/"} Font Downloader 
+  should only be used to download fonts that you are allowed to access.
+
+%hr
+
+%h2 How to include the font?
+%p 
+  Once you have downloaded the zip file of the fonts from the url (if there are any), then this is the most common way to include a custom font in CSS:
 
 %pre
   %code.language-css
     = @css
+
+%p 
+  Things are shifting heavily toward WOFF though, so you can probably get away with:
+
+%pre
+  %code.language-css
+    = @woff

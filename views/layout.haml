@@ -12,6 +12,7 @@
     %meta{content: "", name: "author"}/
     %meta{content: "width=device-width,initial-scale=1", name: "viewport"}/
     %link{href: "/assets/app.css", rel: "stylesheet"}/
+    %link{href: "http://fonts.googleapis.com/css?family=Bitter:400,700,400italic|Open+Sans:700,400", rel: "stylesheet", type: "text/css"}/
     %title Font Downloader - Grab downloadable fonts from any website
 
   %body
@@ -23,7 +24,9 @@
           %ul 
             %li 
               %h1 
-                %a.logo{:href => "/"} Font Downloader
+                %a{href: "/"} Font Downloader
+            %li 
+              %a{href: "/about"} About
 
       %main
         = yield
@@ -31,5 +34,11 @@
       .push
 
     %footer
+      %nav
+        %ul 
+          %li
+            &copy; 
+            %a.logo{href: "http://www.alexchin.co.uk"} Alex Chin
+            &nbsp;&middot;&nbsp;Made as as a hackathon.
 
     %script{src: '/assets/app.js' }
