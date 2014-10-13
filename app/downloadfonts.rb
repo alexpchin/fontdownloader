@@ -109,8 +109,20 @@ module Download
         # Ensure that the filenames are all uniq
         input_filenames.uniq! if input_filenames
 
+        # Create a directory name for this download
+        target_dir_name = Date.today.strftime('%y%m%d')
+
+        # Create securehex to add to this download
+        hex = SecureRandom.hex
+
+        # Create unique(ish) directory name using target_dir_name and hex
+        target_dir_name = "#{target_dir_name}-#{hex}"
+
         # Download the fonts with Sidekiq
-        FontWorker.perform_async(input_filenames)
+        FontWorker.perform_async(input_filenames, target_dir_name)
+
+        # Return the zip name to controller
+        "#{target_dir_name}.zip"
 
       else
         return false

@@ -14,6 +14,7 @@ gem 'css_parser'
 
 # Zip files
 gem 'rubyzip'
+gem 'sinatra-xsendfile'
 
 # Compression & display
 gem 'sprockets'
@@ -21,9 +22,6 @@ gem 'yui-compressor'
 gem 'coffee-script'
 gem 'sass'
 gem 'haml'
-
-# Syntax highlighting
-gem 'glorify'
 
 # Sidekiq
 gem 'sidekiq'

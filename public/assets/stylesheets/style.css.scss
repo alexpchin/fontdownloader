@@ -125,8 +125,9 @@ html, body {
     color: $light-green;
     height: $nav-height / 2;
     line-height: $nav-height / 2;
-    font-size: 1.5em;
-    border-bottom: 1px solid darken($green, 10%); 
+    font-size: 1em;
+    border-bottom: 1px solid darken($green, 10%);
+    border-bottom: 1px solid lighten($darkslategray, 10%); 
 
     .flash {
       &.info {

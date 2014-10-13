@@ -2,6 +2,7 @@ module FontDownloader
   class App < Sinatra::Base
     register Sinatra::Flash
     helpers Sinatra::RedirectWithFlash
+    helpers Sinatra::Xsendfile
     
     configure do
       # Set the views location
@@ -22,6 +23,17 @@ module FontDownloader
           env.css_compressor = YUI::CssCompressor.new
         end
       })
+
+      # Required for flash
+      enable :sessions
+    end
+
+    configure :production do
+      # replace Sinatra's send_file with x_send_file
+      Sinatra::Xsendfile.replace_send_file! 
+      
+      # set x_send_file header (default: X-SendFile)
+      set :xsf_header, 'X-Accel-Redirect'
     end
 
     get '/' do
@@ -32,7 +44,8 @@ module FontDownloader
 
     post '/' do
       target_dir_name = Download::run params[:url]
-      flash[:notice] = 'The post was successfully created'
+      flash[:notice] = "Zip: #{target_dir_name}"
+      puts "#{flash[:notice]}"
       redirect "/"
     end
 

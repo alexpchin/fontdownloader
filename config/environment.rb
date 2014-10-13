@@ -19,6 +19,7 @@ require 'sidekiq/web'
 require 'nokogiri'
 require 'sass'
 require 'haml'
+require 'sinatra/xsendfile'
 
 # Some helper constants for path-centric logic
 APP_ROOT = Pathname.new(File.expand_path('../../', __FILE__))

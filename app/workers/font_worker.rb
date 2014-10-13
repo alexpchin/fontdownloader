@@ -1,28 +1,16 @@
 class FontWorker
   include Sidekiq::Worker
 
-  def perform(input_filenames)
+  def perform(input_filenames, target_dir_name)
     
     # Create an array of uri pairs [{ resource: "x", filename: "y" }] for each url
     uris = read_uris_from_file(input_filenames)
-
-    # Create a directory name for this download
-    target_dir_name = Date.today.strftime('%y%m%d')
-
-    # Create securehex to add to this download
-    hex = SecureRandom.hex
-
-    # Create unique(ish) directory name using target_dir_name and hex
-    target_dir_name = "#{target_dir_name}-#{hex}"
 
     # Create a directory and return absolute path
     path = create_directory(target_dir_name)
 
     # Changes the current working directory of the process to the given string.
     Dir.chdir(path)
-    
-    # TO DO - remove
-    puts "Changed directory: " + Dir.pwd
 
     # Download all the Files from the urls
     download_resources(uris)
@@ -33,9 +21,6 @@ class FontWorker
 
     # Zip the directory (folder, input_filenames, zipfile_name)
     zip_file(Dir.pwd, input_filenames, "#{target_dir_name}.zip")
-
-    # Return zip name to controller
-    "#{target_dir_name}"
 
   end
 
