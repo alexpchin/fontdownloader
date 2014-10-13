@@ -158,10 +158,14 @@ html, body {
       nav {
         margin: 0 auto;
         max-width: $site-max-width;
+        height: $nav-height;
         line-height: $nav-height;
 
         ul {
           display: inline;
+          height: $nav-height;
+          line-height: $nav-height;
+
           li {
             display: inline;
             height: $nav-height;
@@ -202,4 +206,54 @@ html, body {
       max-width: $site-max-width;
     }
   }
+}
+
+@media screen and (min-width:960px) {
+
+  header {
+    nav {
+      > ul {
+        display: block !important;
+      }
+    }
+  }
+
+}
+
+@media screen and (max-width:960px) {
+
+  body {
+    header, main, footer {
+      padding: 0 1em;
+    }
+    input {
+      width: 100%;
+    }
+    .wrapper {
+      margin: 0 auto -60px;
+      header {
+        h1 {
+          text-align: center;
+        }
+        nav {
+          ul {
+            li {
+              &:first-child {
+                text-align: center;
+                float: left;
+                width: 100%;
+              }
+            }
+          }
+        }
+      }
+      .push {
+        height: 60px;
+      }
+    }
+    footer {
+      height: 60px;
+    }
+  }
+
 }
