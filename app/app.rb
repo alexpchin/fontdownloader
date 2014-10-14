@@ -2,7 +2,6 @@ module FontDownloader
   class App < Sinatra::Base
     register Sinatra::Flash
     helpers Sinatra::RedirectWithFlash
-    helpers Sinatra::Xsendfile
     
     configure do
       # Set the views location
@@ -26,14 +25,6 @@ module FontDownloader
 
       # Required for flash
       enable :sessions
-    end
-
-    configure :production do
-      # replace Sinatra's send_file with x_send_file
-      Sinatra::Xsendfile.replace_send_file! 
-      
-      # set x_send_file header (default: X-SendFile)
-      set :xsf_header, 'X-Accel-Redirect'
     end
 
     get '/' do

@@ -2,7 +2,7 @@ class FontWorker
   include Sidekiq::Worker
 
   def perform(input_filenames, target_dir_name)
-    
+
     # Create an array of uri pairs [{ resource: "x", filename: "y" }] for each url
     uris = read_uris_from_file(input_filenames)
 
@@ -16,12 +16,29 @@ class FontWorker
     download_resources(uris)
 
     # Build array of filenames on server
-    # TO DO = uniq! Should happen further up this process
-    input_filenames = uris.map { |file| file[:filename] }.uniq!
+    input_filenames = uris.map { |file| file[:filename] }
 
     # Zip the directory (folder, input_filenames, zipfile_name)
-    zip_file(Dir.pwd, input_filenames, "#{target_dir_name}.zip")
+    zip = zip_file(Dir.pwd, input_filenames, "#{target_dir_name}.zip")
 
+    # uploader = FontUploader.new
+    # uploader.store! zip
+
+  end
+
+  def create_directory(dirname)
+    path = File.expand_path("../../../public/uploads/#{dirname}", __FILE__)
+    unless File.exists?(path)
+      Dir.mkdir(path)
+    else
+      puts "Skipping creating directory #{path}. It already exists."
+    end
+    path
+  end
+
+  def get_filename(url)
+    uri = URI.parse(url)
+    File.basename(uri.path) if !uri.path.nil?
   end
 
   def read_uris_from_file(files)
@@ -29,7 +46,7 @@ class FontWorker
       url = url.strip
       next if url == nil || url.length == 0
       pair = { resource: url, filename: get_filename(url) }
-    end
+    end.uniq!
   end
 
   def download_resource(resource, filename)

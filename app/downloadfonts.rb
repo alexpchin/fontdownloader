@@ -15,21 +15,6 @@ module Download
       end
     end
 
-    def create_directory(dirname)
-      path = File.expand_path("../../public/uploads/#{dirname}", __FILE__)
-      unless File.exists?(path)
-        Dir.mkdir(path)
-      else
-        puts "Skipping creating directory #{path}. It already exists."
-      end
-      path
-    end
-
-    def get_filename(url)
-      uri = URI.parse(url)
-      File.basename(uri.path) if !uri.path.nil?
-    end
-
     # Array of font_faces
     def grab_font_urls(url, font_faces)
 

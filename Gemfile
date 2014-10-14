@@ -14,7 +14,9 @@ gem 'css_parser'
 
 # Zip files
 gem 'rubyzip'
-gem 'sinatra-xsendfile'
+gem 'carrierwave'
+gem 'aws-sdk'
+gem 'fog'
 
 # Compression & display
 gem 'sprockets'
@@ -26,6 +28,9 @@ gem 'haml'
 # Sidekiq
 gem 'sidekiq'
 gem 'sidekiq-failures'
+gem 'redis'
+# gem 'heroku-api'
+# gem 'autoscaler'
 
 # Sinatra flash
 gem 'sinatra-flash'
