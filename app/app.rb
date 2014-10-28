@@ -35,27 +35,22 @@ module FontDownloader
 
     post '/' do
       begin
-        # Create a directory name for this download
-        target_dir_name = Date.today.strftime('%y%m%d')
+        # Create unique(ish) filename using datetime and hex
+        target_dir_name = "#{Date.today.strftime('%y%m%d')}-#{SecureRandom.hex}"
 
-        # Create securehex to add to this download
-        hex = SecureRandom.hex
-
-        # Create unique(ish) directory name using target_dir_name and hex
-        target_dir_name = "#{target_dir_name}-#{hex}"
-
+        # Create tempfile
         t = Tempfile.new(target_dir_name)
 
+        # Add fontfiles to tempfile
         Zip::OutputStream.open(t.path) do |z|
-          Download::run(t.path)
+          # Download::run(t.path)
         end
 
         # Send tempfile to user
-        send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => "List.zip"
+        send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => "fonts-#{target_dir_name}.zip"
       
       ensure
         t.close
-        t.unlink # Delete the tempfile
       end
 
       flash[:notice] = "Thanks for using Font Downloader."

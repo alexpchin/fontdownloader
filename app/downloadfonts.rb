@@ -2,6 +2,8 @@ module Download
   # Metaclass to make all methods class methods
   class << self 
 
+
+
     def run tempfile_path
       # @list.items.each do |item|
       #   title = item.image_file_name
@@ -10,21 +12,11 @@ module Download
       #   url1_data = open(url1)
       #   z.print IO.read(url1_data)
       # end
+
+      # Grab all font files
+      # Save them to 
+
     end
-
-
-    # # [/^http/], [/^\/\//]
-    # def get_long_url(url, short_url)
-    #   if !short_url.include?("http")     
-    #     if short_url.include?("//")
-    #       "http:#{short_url}"
-    #     else 
-    #       "#{url}#{short_url}"
-    #     end
-    #   else
-    #     "#{short_url}"
-    #   end
-    # end
 
     # # Array of font_faces
     # def grab_font_urls(url, font_faces)
@@ -66,7 +58,7 @@ module Download
 
     #       begin
     #         # Build long url for stylesheet
-    #         link = get_long_url(url, s)
+    #         link = UrlResolver.resolve(url, s)
             
     #         # Show stylesheet link in terminal
     #         puts "Stylesheet #{link}"
@@ -85,7 +77,7 @@ module Download
     #           # Input filenames
     #           font_urls = grab_font_urls(url, font_faces).flatten
             
-    #           input_filenames << font_urls.map { |file|  get_long_url(url, file) }
+    #           input_filenames << font_urls.map { |file|  UrlResolver.resolve(url, file) }
 
     #         else
     #           return false
