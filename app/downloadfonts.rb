@@ -2,16 +2,6 @@ module Download
   # Metaclass to make all methods class methods
   class << self 
 
-    def run tempfile_path
-      # @list.items.each do |item|
-      #   title = item.image_file_name
-      #   z.put_next_entry("images/#{title}")
-      #   url1 = item.image.url
-      #   url1_data = open(url1)
-      #   z.print IO.read(url1_data)
-      # end
-    end
-
     def run(url, temp_zip_file)
 
       # Get head from url
@@ -19,12 +9,11 @@ module Download
 
       # Grab the stylesheets urls
       stylesheets = grab_stylesheets_from_head(doc)
-puts "Font Downloader has found #{stylesheets.count} stylesheets."
 
       if stylesheets
 
+        # Create array of font_files
         input_filenames = build_array_of_font_files(stylesheets, url)
-puts "Input Filenames: #{input_filenames.inspect}"
 
         # Ensure that the filenames are all uniq
         input_filenames.uniq! if input_filenames
@@ -48,20 +37,24 @@ puts "Input Filenames: #{input_filenames.inspect}"
       doc.xpath('//link[@rel="stylesheet"]').map { |link| link['href'] }
     end
 
+    def return_css(url, stylesheet)
+      # Resolve long url for stylesheet, //, http:// or relative
+      link = UrlResolver.resolve(url, stylesheet)
+
+      # Open stylesheet using Nokogiri
+      css = Nokogiri::HTML(open(link)).to_s
+
+      # Split css for regex
+      css = css.split(';').join('; ')
+    end
+
     # Parse each stylesheet and rip out the font file urls (eot|woff|ttf|svg)
     def build_array_of_font_files(stylesheets, url)
-      stylesheets.map do |s| 
+      stylesheets.map do |stylesheet| 
 
         begin
-          # Resolve long url for stylesheet, //, http:// or relative
-          link = UrlResolver.resolve(url, s)
-
-          # Open stylesheet using Nokogiri
-          css = Nokogiri::HTML(open(link)).to_s
-
-          # Split css for regex
-          css = css.split(';').join('; ')
-
+          css = return_css(url, stylesheet)
+          
           # Grab all @font-face declarations
           font_faces = css.scan(/@font-face[^}]*\}/)
 
@@ -140,7 +133,7 @@ puts "Input Filenames: #{input_filenames.inspect}"
       case uri.scheme.downcase
       when /http|https/
         # http_download_uri(uri, filename)
-        http_download_uri_and_write_file_to_temp(url, filename, temp_zip_file)
+        http_download_uri_and_write_file_to_temp(uri, filename, temp_zip_file)
       when /ftp/
         ftp_download_uri(uri, filename)
       else
