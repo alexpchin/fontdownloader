@@ -1,4 +1,5 @@
 module Download
+  
   # Metaclass to make all methods class methods
   class << self 
 
@@ -9,24 +10,17 @@ module Download
 
       # Grab the stylesheets urls
       stylesheets = grab_stylesheets_from_head(doc)
+      raise ArgumentError, "There are no stylesheets." if stylesheets.nil?
 
-      if stylesheets
+      # Create array of font_files
+      input_filenames = build_array_of_font_files(stylesheets, url)
 
-        # Create array of font_files
-        input_filenames = build_array_of_font_files(stylesheets, url)
+      # Create an array of uri pairs [{ resource: "x", filename: "y" }]
+      uris = read_uris_from_file(input_filenames)
 
-        # Ensure that the filenames are all uniq
-        input_filenames.uniq! if input_filenames
+      # Download files to temp_zip_file
+      download_resources(uris, temp_zip_file)
 
-        # Create an array of uri pairs [{ resource: "x", filename: "y" }]
-        uris = read_uris_from_file(input_filenames)
-
-        # Download files to temp_zip_file
-        download_resources(uris, temp_zip_file)
-
-      else
-        return false
-      end
     end
 
     def grab_head(url)
@@ -37,44 +31,46 @@ module Download
       doc.xpath('//link[@rel="stylesheet"]').map { |link| link['href'] }
     end
 
-    def return_css(url, stylesheet)
-      # Resolve long url for stylesheet, //, http:// or relative
-      link = UrlResolver.resolve(url, stylesheet)
-
-      # Open stylesheet using Nokogiri
-      css = Nokogiri::HTML(open(link)).to_s
-
-      # Split css for regex
-      css = css.split(';').join('; ')
-    end
-
     # Parse each stylesheet and rip out the font file urls (eot|woff|ttf|svg)
     def build_array_of_font_files(stylesheets, url)
       stylesheets.map do |stylesheet| 
 
-        begin
-          css = return_css(url, stylesheet)
-          
-          # Grab all @font-face declarations
-          font_faces = css.scan(/@font-face[^}]*\}/)
+        css = return_css(url, stylesheet)
+        
+        # Grab all @font-face declarations
+        font_faces = css.scan(/@font-face[^}]*\}/)
+        raise ArgumentError, "There are no fonts." if font_faces.nil?
 
-          if font_faces
-            # Input filenames
-            font_urls = grab_font_urls(url, font_faces).flatten
-          
-            # Collect font urls
-            font_urls.map { |file|  UrlResolver.resolve(url, file) }
-          end
+        # Input filenames
+        font_urls = grab_font_urls(url, font_faces).flatten
+        raise ArgumentError, "There are no fonts." if font_faces.nil?
 
-        rescue OpenURI::HTTPError => e
-          if e.message == '404 Not Found'
-            # handle 404 error
-          else
-            raise e
-          end
-        end
+        # Collect unique font urls
+        font_urls.uniq.map { |file| UrlResolver.resolve(url, file) }       
 
       end.flatten
+    end
+
+    def return_css(url, stylesheet)
+      # Resolve long url for stylesheet, //, http:// or relative
+      link = UrlResolver.resolve(url, stylesheet)
+
+      begin
+
+        # Open stylesheet using Nokogiri & beautify/split css for regex
+        css = beautify_css(Nokogiri::HTML(open(link)).to_s)
+
+      rescue OpenURI::HTTPError => e
+        if e.message == '404 Not Found'
+          # handle 404 error
+        else
+          raise e
+        end
+      end
+    end
+
+    def beautify_css(string)
+      string.split(';').join('; ')
     end
 
     # Array of font_faces
@@ -87,9 +83,7 @@ module Download
         array = font.scan(/(?:\(['|"]?)(.*?)(?:['|"]?\))/)
 
         # If array is not empty
-        if array.any?
-          array.flatten.map { |f| f if f[/.eot|.woff|.ttf|.svg/] }.compact
-        end
+        array.flatten.map { |f| f if f[/.eot|.woff|.ttf|.svg/] }.compact if array.any?
       end
     end
 
@@ -113,7 +107,7 @@ module Download
         unless File.exists?(filename)
           download_resource(resource, filename, temp_zip_file)
         else
-          puts "Skipping download for " + filename + ". It already exists."
+puts "Skipping download for " + filename + ". It already exists."
         end
       end
     end
@@ -124,91 +118,71 @@ module Download
       when /http|https/
         # http_download_uri(uri, filename)
         http_download_uri_and_write_file_to_temp(uri, filename, temp_zip_file)
-      when /ftp/
-        ftp_download_uri(uri, filename)
+      # when /ftp/
+      #   ftp_download_uri(uri, filename)
       else
-        puts "Unsupported URI scheme for resource " + resource + "."
+puts "Unsupported URI scheme for resource " + resource + "."
       end
-    end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    def tmp_filename
-      [
-        Pathname.new(uri.path).basename,
-        Pathname.new(uri.path).extname
-      ]
-    end
-
-    def io
-      @io ||= uri.open
-    end
-    
-    def encoding
-      io.rewind
-      io.read.encoding
     end
 
     def http_download_uri_and_write_file_to_temp(uri, filename, temp_zip_file)
+puts "Starting HTTP download for: " + uri.to_s
+
+      # Net::HTTP is an HTTP client API for Ruby
+      # If I am only performing a few GET requests should I try OpenURI?
+      http_object = Net::HTTP.new(uri.host, uri.port)
+      http_object.use_ssl = true if uri.scheme == 'https'
 
       begin
-        # Create a local representation of the remote resource
-        local_resource = Tempfile.new(tmp_filename, temp_zip_file, encoding: encoding).tap do |f|
-          io.rewind
-          f.write(io.read)
-          f.close
+
+        # Open a connection to the server
+        http_object.start do |http|
+
+          # Make new Get request
+          request = Net::HTTP::Get.new uri.request_uri
+puts request.class
+          http.read_timeout = 500
+
+          # Create a Net::HTTPResponse object from that request
+          http.request request do |response|
+puts response
+
+            # Opens the file
+            # open filename, 'w' do |io|
+              # response.read_body do |chunk|
+              #   temp_zip_file.put_next_entry(filename)
+            #     # temp_zip_file.print IO.read(chunk)
+              #   temp_zip_file.write IO.read(response.body)
+              # end
+            # end
+          end
         end
-
-        # Create copy of the remote file for processing
-        local_copy_of_remote_file = local_resource.file
-
-        temp_zip_file.put_next_entry(filename)
-        temp_zip_file.print IO.read(local_copy_of_remote_file)
-
-      ensure
-        # Explicitly close your tempfiles
-        local_copy_of_remote_file.close
-        local_copy_of_remote_file.unlink
+        
+      rescue Exception => e
+        puts "=> Exception: '#{e}'. Skipping download."
+        return
       end
-
-      # puts "Starting HTTP download for: " + uri.to_s
-      # http_object = Net::HTTP.new(uri.host, uri.port)
-      # http_object.use_ssl = true if uri.scheme == 'https'
-      # begin
-      #   http_object.start do |http|
-      #     request = Net::HTTP::Get.new uri.request_uri
-      #     http.read_timeout = 500
-
-      #     # Request the file using http
-      #     http.request request do |response|
-            
-      #       # Opens the file
-      #       open filename, 'w' do |io|
-      #         response.read_body do |chunk|
-      #           temp_zip_file.put_next_entry(filename)
-      #           # temp_zip_file.print IO.read(chunk)
-      #           temp_zip_file.write IO.read(chunk)
-      #         end
-      #       end
-      #     end
-      #   end
-      # rescue Exception => e
-      #   puts "=> Exception: '#{e}'. Skipping download."
-      #   return
-      # end
-      # puts "Stored download as " + filename + "."
+      puts "Stored download as " + filename + "."
     end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     # def http_download_uri(uri, filename)
     #   puts "Starting HTTP download for: " + uri.to_s
@@ -233,61 +207,22 @@ module Download
     #   puts "Stored download as " + filename + "."
     # end
 
-    def ftp_download_uri(uri, filename)
-      puts "Starting FTP download for: " + uri.to_s + "."
-      dirname = File.dirname(uri.path)
-      basename = File.basename(uri.path)
-      begin
-        Net::FTP.open(uri.host) do |ftp|
-          ftp.login
-          ftp.chdir(dirname)
-          ftp.getbinaryfile(basename)
-        end
-      rescue Exception => e
-        puts "=> Exception: '#{e}'. Skipping download."
-        return
-      end
-      puts "Stored download as " + filename + "."
-    end
+    # def ftp_download_uri(uri, filename)
+    #   puts "Starting FTP download for: " + uri.to_s + "."
+    #   dirname = File.dirname(uri.path)
+    #   basename = File.basename(uri.path)
+    #   begin
+    #     Net::FTP.open(uri.host) do |ftp|
+    #       ftp.login
+    #       ftp.chdir(dirname)
+    #       ftp.getbinaryfile(basename)
+    #     end
+    #   rescue Exception => e
+    #     puts "=> Exception: '#{e}'. Skipping download."
+    #     return
+    #   end
+    #   puts "Stored download as " + filename + "."
+    # end
 
   end
-
-  class LocalResource
-
-    attr_reader :uri, :tmp_folder
-    
-    def initialize(uri)
-      @uri = uri
-      @tmp_folder = tmp_folder
-    end
-
-    def file
-      @file ||= Tempfile.new(tmp_filename, tmp_folder, encoding: encoding).tap do |f|
-        io.rewind
-        f.write(io.read)
-        f.close
-      end
-    end
-    
-    def io
-      @io ||= uri.open
-    end
-    
-    def encoding
-      io.rewind
-      io.read.encoding
-    end
-    
-    def tmp_filename
-      [
-        Pathname.new(uri.path).basename,
-        Pathname.new(uri.path).extname
-      ]
-    end
-    
-    def tmp_folder
-      @tmp_folder
-    end
-
-  end  
 end
