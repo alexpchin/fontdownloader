@@ -122,6 +122,8 @@ GEM
       sinatra (>= 1.0.0)
     sinatra-redirect-with-flash (0.2.1)
       sinatra (>= 1.0.0)
+    sinatra-xsendfile (0.4.2)
+      sinatra (>= 0.9.1)
     slop (3.6.0)
     sprockets (2.12.2)
       hike (~> 1.2)
@@ -158,6 +160,7 @@ DEPENDENCIES
   sinatra
   sinatra-flash
   sinatra-redirect-with-flash
+  sinatra-xsendfile
   sprockets
   url-resolver
   yui-compressor

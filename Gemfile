@@ -19,6 +19,7 @@ gem 'carrierwave'
 # gem 'aws-sdk'
 gem 'fog'
 gem 'url-resolver'
+gem 'sinatra-xsendfile'
 
 # Compression & display
 gem 'sprockets'

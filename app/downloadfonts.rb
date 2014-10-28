@@ -147,6 +147,10 @@ puts request.class
           http.request request do |response|
 puts response
 
+          # temp_zip_file.put_next_entry(filename)
+          # uri_data = open(uri)
+          # temp_zip_file.print IO.read(uri_data)
+
             # Opens the file
             # open filename, 'w' do |io|
               # response.read_body do |chunk|
@@ -157,7 +161,7 @@ puts response
             # end
           end
         end
-        
+
       rescue Exception => e
         puts "=> Exception: '#{e}'. Skipping download."
         return

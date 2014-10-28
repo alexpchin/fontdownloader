@@ -13,13 +13,13 @@ require 'open-uri'
 
 require 'sinatra/flash'
 require 'sinatra/redirect_with_flash'
+require 'sinatra/xsendfile'
 
 require 'securerandom'
 require 'zip'
 require 'tmpdir'
 require 'url-resolver'
 # require 'downspout'
-
 
 require 'nokogiri'
 require 'sprockets'
