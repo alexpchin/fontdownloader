@@ -140,12 +140,15 @@ puts "Starting HTTP download for: " + uri.to_s
 
           # Make new Get request
           request = Net::HTTP::Get.new uri.request_uri
-puts request.class
           http.read_timeout = 500
 
           # Create a Net::HTTPResponse object from that request
           http.request request do |response|
-puts response
+
+            # File contents
+            response.body
+
+puts temp_zip_file
 
           # temp_zip_file.put_next_entry(filename)
           # uri_data = open(uri)
