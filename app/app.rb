@@ -43,7 +43,9 @@ module FontDownloader
 
         # Add fontfiles to tempfile
         Zip::OutputStream.open(t.path) do |z|
-          # Download::run(t.path)
+puts "#{z}"
+
+          Download::run(params[:url], z)
         end
 
         # Send tempfile to user
