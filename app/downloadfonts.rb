@@ -93,16 +93,6 @@ module Download
       end
     end
 
-    def create_directory(dirname)
-      path = File.expand_path("../../../public/uploads/#{dirname}", __FILE__)
-      unless File.exists?(path)
-        Dir.mkdir(path)
-      else
-        puts "Skipping creating directory #{path}. It already exists."
-      end
-      path
-    end
-
     def get_filename(url)
       uri = URI.parse(url)
       File.basename(uri.path) if !uri.path.nil?
@@ -165,28 +155,28 @@ module Download
       puts "Stored download as " + filename + "."
     end
 
-    def http_download_uri(uri, filename)
-      puts "Starting HTTP download for: " + uri.to_s
-      http_object = Net::HTTP.new(uri.host, uri.port)
-      http_object.use_ssl = true if uri.scheme == 'https'
-      begin
-        http_object.start do |http|
-          request = Net::HTTP::Get.new uri.request_uri
-          http.read_timeout = 500
-          http.request request do |response|
-            open filename, 'w' do |io|
-              response.read_body do |chunk|
-                io.write chunk
-              end
-            end
-          end
-        end
-      rescue Exception => e
-        puts "=> Exception: '#{e}'. Skipping download."
-        return
-      end
-      puts "Stored download as " + filename + "."
-    end
+    # def http_download_uri(uri, filename)
+    #   puts "Starting HTTP download for: " + uri.to_s
+    #   http_object = Net::HTTP.new(uri.host, uri.port)
+    #   http_object.use_ssl = true if uri.scheme == 'https'
+    #   begin
+    #     http_object.start do |http|
+    #       request = Net::HTTP::Get.new uri.request_uri
+    #       http.read_timeout = 500
+    #       http.request request do |response|
+    #         open filename, 'w' do |io|
+    #           response.read_body do |chunk|
+    #             io.write chunk
+    #           end
+    #         end
+    #       end
+    #     end
+    #   rescue Exception => e
+    #     puts "=> Exception: '#{e}'. Skipping download."
+    #     return
+    #   end
+    #   puts "Stored download as " + filename + "."
+    # end
 
     def ftp_download_uri(uri, filename)
       puts "Starting FTP download for: " + uri.to_s + "."
@@ -204,25 +194,6 @@ module Download
       end
       puts "Stored download as " + filename + "."
     end
-
-    # def zip_file(folder, input_filenames, zipfile_name)
-
-    #   # Create a new zipped directory
-    #   Zip::File.open(zipfile_name, Zip::File::CREATE) do |zipfile|
-
-    #     input_filenames.each do |filename|
-    #       # Two arguments: (new_file_name, original_file_path)
-    #       # - The name of the file as it will appear in the archive
-    #       # - The original file, including the path to find it
-    #       zipfile.add(filename, "#{folder}/#{filename}")
-    #     end
-
-    #     # If you want to generate a README ?
-    #     # zipfile.get_output_stream("myFile") { |os| os.write "myFile contains just this" }
-
-    #   end
-    # end
-
 
   end   
 end
