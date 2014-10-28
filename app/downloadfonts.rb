@@ -131,28 +131,83 @@ module Download
       end
     end
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def tmp_filename
+      [
+        Pathname.new(uri.path).basename,
+        Pathname.new(uri.path).extname
+      ]
+    end
+
+    def io
+      @io ||= uri.open
+    end
+    
+    def encoding
+      io.rewind
+      io.read.encoding
+    end
+
     def http_download_uri_and_write_file_to_temp(uri, filename, temp_zip_file)
-      puts "Starting HTTP download for: " + uri.to_s
-      http_object = Net::HTTP.new(uri.host, uri.port)
-      http_object.use_ssl = true if uri.scheme == 'https'
+
       begin
-        http_object.start do |http|
-          request = Net::HTTP::Get.new uri.request_uri
-          http.read_timeout = 500
-          http.request request do |response|
-            open filename, 'w' do |io|
-              response.read_body do |chunk|
-                temp_zip_file.put_next_entry(filename)
-                temp_zip_file.print IO.read(chunk)
-              end
-            end
-          end
+        # Create a local representation of the remote resource
+        local_resource = Tempfile.new(tmp_filename, temp_zip_file, encoding: encoding).tap do |f|
+          io.rewind
+          f.write(io.read)
+          f.close
         end
-      rescue Exception => e
-        puts "=> Exception: '#{e}'. Skipping download."
-        return
+
+        # Create copy of the remote file for processing
+        local_copy_of_remote_file = local_resource.file
+
+        temp_zip_file.put_next_entry(filename)
+        temp_zip_file.print IO.read(local_copy_of_remote_file)
+
+      ensure
+        # Explicitly close your tempfiles
+        local_copy_of_remote_file.close
+        local_copy_of_remote_file.unlink
       end
-      puts "Stored download as " + filename + "."
+
+      # puts "Starting HTTP download for: " + uri.to_s
+      # http_object = Net::HTTP.new(uri.host, uri.port)
+      # http_object.use_ssl = true if uri.scheme == 'https'
+      # begin
+      #   http_object.start do |http|
+      #     request = Net::HTTP::Get.new uri.request_uri
+      #     http.read_timeout = 500
+
+      #     # Request the file using http
+      #     http.request request do |response|
+            
+      #       # Opens the file
+      #       open filename, 'w' do |io|
+      #         response.read_body do |chunk|
+      #           temp_zip_file.put_next_entry(filename)
+      #           # temp_zip_file.print IO.read(chunk)
+      #           temp_zip_file.write IO.read(chunk)
+      #         end
+      #       end
+      #     end
+      #   end
+      # rescue Exception => e
+      #   puts "=> Exception: '#{e}'. Skipping download."
+      #   return
+      # end
+      # puts "Stored download as " + filename + "."
     end
 
     # def http_download_uri(uri, filename)
@@ -195,5 +250,44 @@ module Download
       puts "Stored download as " + filename + "."
     end
 
-  end   
+  end
+
+  class LocalResource
+
+    attr_reader :uri, :tmp_folder
+    
+    def initialize(uri)
+      @uri = uri
+      @tmp_folder = tmp_folder
+    end
+
+    def file
+      @file ||= Tempfile.new(tmp_filename, tmp_folder, encoding: encoding).tap do |f|
+        io.rewind
+        f.write(io.read)
+        f.close
+      end
+    end
+    
+    def io
+      @io ||= uri.open
+    end
+    
+    def encoding
+      io.rewind
+      io.read.encoding
+    end
+    
+    def tmp_filename
+      [
+        Pathname.new(uri.path).basename,
+        Pathname.new(uri.path).extname
+      ]
+    end
+    
+    def tmp_folder
+      @tmp_folder
+    end
+
+  end  
 end
