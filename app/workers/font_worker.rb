@@ -3,26 +3,26 @@ class FontWorker
 
   def perform(input_filenames, target_dir_name)
 
-    # Create an array of uri pairs [{ resource: "x", filename: "y" }] for each url
-    uris = read_uris_from_file(input_filenames)
+    # Create temp directory.
+    # target_dir = Dir.mktmpdir
+    target_dir = create_directory(target_dir_name)
 
-    # Create a directory and return absolute path
-    path = create_directory(target_dir_name)
+    begin
 
-    # Changes the current working directory of the process to the given string.
-    Dir.chdir(path)
+      # Create an array of uri pairs [{ resource: "x", filename: "y" }]
+      uris = read_uris_from_file(input_filenames)
+      
+      # Changes the current working directory of the process to target_dir.
+      Dir.chdir(target_dir)
 
-    # Download all the Files from the urls
-    download_resources(uris)
+      # Download files (will happen inside the folder)
+      download_resources(uris, 
+        )
 
-    # Build array of filenames on server
-    input_filenames = uris.map { |file| file[:filename] }
-
-    # Zip the directory (folder, input_filenames, zipfile_name)
-    zip = zip_file(Dir.pwd, input_filenames, "#{target_dir_name}.zip")
-
-    # uploader = FontUploader.new
-    # uploader.store! zip
+    ensure
+      # Remove temp directory.
+      # FileUtils.remove_entry target_dir
+    end
 
   end
 
@@ -46,10 +46,22 @@ class FontWorker
       url = url.strip
       next if url == nil || url.length == 0
       pair = { resource: url, filename: get_filename(url) }
-    end.uniq!
+    end
   end
 
-  def download_resource(resource, filename)
+  def download_resources(pairs, target_dir)
+    pairs.each do |pair|
+      filename = pair[:filename].to_s
+      resource = pair[:resource].to_s
+      unless File.exists?(filename)
+        download_resource(resource, filename, target_dir)
+      else
+        puts "Skipping download for " + filename + ". It already exists."
+      end
+    end
+  end
+
+  def download_resource(resource, filename, target_dir)
     uri = URI.parse(resource)
     case uri.scheme.downcase
     when /http|https/
@@ -99,18 +111,6 @@ class FontWorker
       return
     end
     puts "Stored download as " + filename + "."
-  end
-
-  def download_resources(pairs)
-    pairs.each do |pair|
-      filename = pair[:filename].to_s
-      resource = pair[:resource].to_s
-      unless File.exists?(filename)
-        download_resource(resource, filename)
-      else
-        puts "Skipping download for " + filename + ". It already exists."
-      end
-    end
   end
 
   def zip_file(folder, input_filenames, zipfile_name)

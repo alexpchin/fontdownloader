@@ -14,8 +14,9 @@ gem 'css_parser'
 
 # Zip files
 gem 'rubyzip'
+# gem 'downspout'
 gem 'carrierwave'
-gem 'aws-sdk'
+# gem 'aws-sdk'
 gem 'fog'
 
 # Compression & display
@@ -35,6 +36,9 @@ gem 'redis'
 # Sinatra flash
 gem 'sinatra-flash'
 gem 'sinatra-redirect-with-flash'
+
+# Mandrill
+gem 'mandrill-api'
 
 group :test, :development do
   gem 'pry'

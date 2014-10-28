@@ -34,9 +34,31 @@ module FontDownloader
     end
 
     post '/' do
-      target_dir_name = Download::run params[:url]
-      flash[:notice] = "Zip: #{target_dir_name}"
-      puts "#{flash[:notice]}"
+      begin
+        # Create a directory name for this download
+        target_dir_name = Date.today.strftime('%y%m%d')
+
+        # Create securehex to add to this download
+        hex = SecureRandom.hex
+
+        # Create unique(ish) directory name using target_dir_name and hex
+        target_dir_name = "#{target_dir_name}-#{hex}"
+
+        t = Tempfile.new(target_dir_name)
+
+        Zip::OutputStream.open(t.path) do |z|
+          Download::run(t.path)
+        end
+
+        # Send tempfile to user
+        send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => "List.zip"
+      
+      ensure
+        t.close
+        t.unlink # Delete the tempfile
+      end
+
+      flash[:notice] = "Thanks for using Font Downloader."
       redirect "/"
     end
 

@@ -19,3 +19,26 @@
 
 ## Start Redis
 # bundle exec sidekiq -r ./config/environment.rb
+
+
+ 
+# # Create an array of uri pairs [{ resource: "x", filename: "y" }] for each url
+# uris = read_uris_from_file(input_filenames)
+
+# # Create a directory and return absolute path
+# path = create_directory(target_dir_name)
+
+# # Changes the current working directory of the process to the given string.
+# Dir.chdir(path)
+
+# # Download all the Files from the urls
+# download_resources(uris)
+
+# # Build array of filenames on server
+# input_filenames = uris.map { |file| file[:filename] }
+
+# # Zip the directory (folder, input_filenames, zipfile_name)
+# zip = zip_file(Dir.pwd, input_filenames, "#{target_dir_name}.zip")
+
+# uploader = FontUploader.new
+# uploader.store! zip

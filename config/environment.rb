@@ -15,17 +15,24 @@ require 'sinatra/redirect_with_flash'
 
 require 'securerandom'
 require 'zip'
+require 'tmpdir'
+# require 'downspout'
 
 require 'nokogiri'
 require 'sprockets'
 require 'sass'
 require 'haml'
+
 require 'carrierwave'
 require 'sidekiq/web'
 require 'redis'
 # require 'autoscaler'
 # require 'autoscaler/sidekiq'
 # require 'autoscaler/heroku_scaler'
+
+require 'mandrill'
+
+require 'pry'
 
 # Some helper constants for path-centric logic
 APP_ROOT = Pathname.new(File.expand_path('../../', __FILE__))
@@ -68,6 +75,9 @@ Dir[APP_ROOT.join('app', 'workers', '*.rb')].each { |file| require file }
 
 # Set up the uploaders
 Dir[APP_ROOT.join('app', 'uploaders', '*.rb')].each { |file| require file }
+
+# Set up the mailers
+Dir[APP_ROOT.join('app', 'mailers', '*.rb')].each { |file| require file }
 
 # Set up the database and models
 # require APP_ROOT.join('config', 'database')
