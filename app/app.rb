@@ -30,10 +30,10 @@ module FontDownloader
     end
 
     configure :production do
-      # replace Sinatra's send_file with x_send_file
+      # Replace Sinatra's send_file with x_send_file
       Sinatra::Xsendfile.replace_send_file!
 
-      # set x_send_file header (default: X-SendFile)
+      # Set x_send_file header (default: X-SendFile)
       set :xsf_header, 'X-Accel-Redirect'
     end
 
