@@ -1,6 +1,5 @@
 module FontDownloader
-  
-  # class << self
+
   class Download
     attr_reader :url, :tmp_folder
 
@@ -10,156 +9,152 @@ module FontDownloader
     end
 
     def run
-      @doc = grab_head
-      @stylesheets = grab_stylesheets_from_head
+
+      # input_filenames = build_array_of_font_files(stylesheets)
+      # raise ArgumentError, "There are no stylesheets." if input_filenames.empty?
+
+      font_urls = FontUrls.new(url, stylesheets).extract
+puts input_filenames
+
+      # download_resources(input_filenames)
     end
 
-    def grab_head
-      Nokogiri::HTML(open(url)).xpath("/html/head")
-    end
+    
 
-    def grab_stylesheets_from_head
-      raise ArgumentError, "Url has no head." unless doc
-      doc.xpath('//link[@rel="stylesheet"]').map { |link| link['href'] }
-      raise ArgumentError, "There are no stylesheets." if stylesheets.nil?
-    end
+    # def build_array_of_font_files(stylesheets)
+    #   stylesheets.map do |stylesheet| 
 
-#     def run(url, tmp_folder)
-#       # Get head from url
-#       doc = grab_head(url)
-
-#       # Grab the stylesheets urls
-#       stylesheets = grab_stylesheets_from_head(doc)
-#       raise ArgumentError, "There are no stylesheets." if stylesheets.nil?
-
-#       # Create array of font_files
-#       input_filenames = build_array_of_font_files(stylesheets, url)
-
-#       # Download files to tmp_folder
-#       download_resources(input_filenames, tmp_folder)
-#     end
-
-
-
-#     def grab_stylesheets_from_head(doc)
-#       doc.xpath('//link[@rel="stylesheet"]').map { |link| link['href'] }
-#     end
-
-#     # Parse each stylesheet and rip out the font file urls (eot|woff|ttf|svg)
-#     def build_array_of_font_files(stylesheets, url)
-#       stylesheets.map do |stylesheet| 
-
-#         css = return_css(url, stylesheet)
+    #     css = return_css(stylesheet)
         
-#         # Grab all @font-face declarations
-#         font_faces = css.scan(/@font-face[^}]*\}/)
-#         raise ArgumentError, "There are no fonts." if font_faces.nil?
+    #     # Grab all @font-face declarations
+    #     font_faces = css.scan(/@font-face[^}]*\}/)
+    #     raise ArgumentError, "There are no fonts." if font_faces.nil?
 
-#         # Input filenames
-#         font_urls = grab_font_urls(url, font_faces).flatten
-#         raise ArgumentError, "There are no fonts." if font_faces.nil?
+    #     font_urls = create_array_of_font_urls(font_faces).flatten
+    #     raise ArgumentError, "There are no fonts." if font_faces.nil?
 
-#         # Collect unique font urls
-#         font_urls.uniq! if font_urls
-#         font_urls.map { |file| UrlResolver.resolve(url, file) }    
+    #     font_urls.uniq! if font_urls
+    #     font_urls.map { |file| UrlResolver.resolve(url, file) }    
 
-#       end.flatten
-#     end
+    #   end.flatten
+    # end
 
-#     def return_css(url, stylesheet)
-#       # Resolve long url for stylesheet, //, http:// or relative
-#       link = UrlResolver.resolve(url, stylesheet)
+    # def return_css(stylesheet)
+    #   # Resolve long url for stylesheet, //, http:// or relative
+    #   link = UrlResolver.resolve(url, stylesheet)
 
-#       begin
-#         # Open stylesheet using Nokogiri & beautify/split css for regex
-#         css = beautify_css(Nokogiri::HTML(open(link)).to_s)
+    #   begin
+    #     # Open stylesheet using Nokogiri & beautify/split css for regex
+    #     css = beautify_css(Nokogiri::HTML(open(link)).to_s)
 
-#       rescue OpenURI::HTTPError => e
-#         if e.message == '404 Not Found'
-#           # handle 404 error
-#         else
-#           raise e
-#         end
-#       end
-#     end
+    #   rescue OpenURI::HTTPError => e
+    #     if e.message == '404 Not Found'
+    #       # handle 404 error
+    #     else
+    #       raise e
+    #     end
+    #   end
+    # end
 
-#     def beautify_css(string)
-#       string.split(';').join('; ')
-#     end
+    # def beautify_css(string)
+    #   string.split(';').join('; ')
+    # end
 
-#     # Array of font_faces
-#     def grab_font_urls(url, font_faces)
-#       # Grab URLS out of @font-face
-#       font_faces.map do |font|
+    # def create_array_of_font_urls(font_faces)
+    #   font_faces.map do |font|
 
-#         # Anything between the brackets
-#         array = font.scan(/(?:\(['|"]?)(.*?)(?:['|"]?\))/)
+    #     # Anything between the brackets
+    #     array = font.scan(/(?:\(['|"]?)(.*?)(?:['|"]?\))/)
 
-#         # If array is not empty
-#         array.flatten.map { |f| f if f[/.eot|.woff|.ttf|.svg/] }.compact if array.any?
-#       end
-#     end
+    #     array.flatten.map { |f| f if f[/.eot|.woff|.ttf|.svg/] }.compact if array.any?
+    #   end
+    # end
 
-#     def get_filename(url)
-#       uri = URI.parse(url)
-#       File.basename(uri.path) if !uri.path.nil?
-#     end
+    def get_filename(url)
+      uri = URI.parse(url)
+      File.basename(uri.path) if !uri.path.nil?
+    end
 
-#     def read_uris_from_file(files)
-#       files.map do |url|
-#         url = url.strip
-#         next if url == nil || url.length == 0
-#         pair = { resource: url, filename: get_filename(url) }
-#       end
-#     end
+    def read_uris_from_file(files)
+      files.map do |url|
+        url = url.strip
+        next if url == nil || url.length == 0
+        pair = { resource: url, filename: get_filename(url) }
+      end
+    end
 
-#     def download_resources(input_filenames, tmp_folder)
-#       # Create an array of uri pairs [{ resource: "x", filename: "y" }]
-#       pairs = read_uris_from_file(input_filenames)
+    def download_resources(input_filenames)
+      pairs = read_uris_from_file(input_filenames)
 
-#       pairs.each do |pair|
-#         filename = pair[:filename].to_s
-#         resource = pair[:resource].to_s
-#         unless File.exists?(filename)
-#           download_resource(resource, filename, tmp_folder)
-#         else
-# puts "Skipping download for " + filename + ". It already exists."
-#         end
-#       end
-#     end
+      pairs.each do |pair|
+        filename = pair[:filename].to_s
+        resource = pair[:resource].to_s
+        unless File.exists?(filename)
+          download_resource(resource, filename)
+        else
+          puts "Skipping download for " + filename + ". It already exists."
+        end
+      end
+    end
 
-#     def download_resource(resource, filename, tmp_folder)
-#       uri = URI.parse(resource)
+    def download_resource(resource, filename)
+      uri = URI.parse(resource)
 
-#       case uri.scheme.downcase
-#       when /http|https/
-#         # http_download_uri(uri, filename)
-#         http_download_uri_and_write_file_to_temp(uri, filename, tmp_folder)
-#       # when /ftp/
-#       #   ftp_download_uri(uri, filename)
-#       else
-# puts "Unsupported URI scheme for resource " + resource + "."
-#       end
-#     end
+      case uri.scheme.downcase
+      when /http|https/
+        # http_download_uri(uri, filename)
+        http_download_uri_and_write_file_to_temp(uri, filename)
+      # when /ftp/
+      #   ftp_download_uri(uri, filename)
+      else
+        puts "Unsupported URI scheme for resource " + resource + "."
+      end
+    end
 
-#     def http_download_uri_and_write_file_to_temp(uri, filename, tmp_folder)
-# puts "Starting HTTP download for: " + uri.to_s
+    def local_resource_from_url(uri)
+      LocalResource.new(uri, tmp_folder)
+    end
 
-#       begin
-#         # We create a local representation of the remote resource
-#         local_resource = local_resource_from_url(uri.to_s)
+    def return_local_temp_file(uri, filename)
+      # begin
+        # We create a local representation of the remote resource in temp zip
+        local_resource = local_resource_from_url(uri)
+puts local_resource
 
-#         # We have a copy of the remote file for processing
+        # We have a copy of the remote file for processing
 #         local_copy_of_remote_file = local_resource.file
-        
-#         # Do your processing with the local file
-#   puts local_copy_of_remote_file
+# puts local_copy_of_remote_file
 
-#       ensure
-#         # It's good idea to explicitly close your tempfiles
-#         local_copy_of_remote_file.close
-#         local_copy_of_remote_file.unlink
-#       end
+        # copy_to_zip(local_copy_of_remote_file.path, filename)
+
+      # ensure
+      #   # It's good idea to explicitly close your tempfiles
+      #   local_copy_of_remote_file.close
+      #   local_copy_of_remote_file.unlink
+      # end
+    end
+
+    def copy_to_zip(path, filename)
+      Zip::OutputStream.open(tmp_folder) do |z|
+        z.put_next_entry(filename)
+        z.print IO.read(open(path))
+      end
+    end
+
+    def http_download_uri_and_write_file_to_temp(uri, filename)
+      puts "Starting HTTP download for: " + uri.to_s
+      
+      begin
+        return_local_temp_file(uri.to_s, filename)
+
+      rescue Exception => e
+        puts "=> Exception: '#{e}'. Skipping download for: " + uri.to_s
+        return
+      end
+
+      puts "Stored download as " + filename + "."
+    end
+
 
 
 #       # Net::HTTP is an HTTP client API for Ruby
