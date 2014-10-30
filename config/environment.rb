@@ -18,6 +18,7 @@ require 'sinatra/xsendfile'
 require 'securerandom'
 require 'zip'
 require 'tmpdir'
+require 'tempfile'
 require 'url-resolver'
 # require 'downspout'
 
@@ -41,6 +42,9 @@ APP_NAME = APP_ROOT.basename.to_s
 
 # Set up the app files
 Dir[APP_ROOT.join('app', '*.rb')].each { |file| require file }
+
+# Set up the classes
+Dir[APP_ROOT.join('app', 'lib', '*.rb')].each { |file| require file }
 
 # # Setup Sidekiq
 Sidekiq.configure_client do |config|

@@ -2,8 +2,7 @@ module FontDownloader
   class App < Sinatra::Base
     register Sinatra::Flash
     helpers Sinatra::RedirectWithFlash
-    # register Sinatra::Xsendfile
-    helpers Sinatra::Xsendfile
+    # helpers Sinatra::Xsendfile
     
     configure do
       # Set the views location
@@ -29,13 +28,13 @@ module FontDownloader
       enable :sessions 
     end
 
-    configure :production do
-      # Replace Sinatra's send_file with x_send_file
-      Sinatra::Xsendfile.replace_send_file!
+    # configure :production do
+    #   # Replace Sinatra's send_file with x_send_file
+    #   Sinatra::Xsendfile.replace_send_file!
 
-      # Set x_send_file header (default: X-SendFile)
-      set :xsf_header, 'X-Accel-Redirect'
-    end
+    #   # Set x_send_file header (default: X-SendFile)
+    #   set :xsf_header, 'X-Accel-Redirect'
+    # end
 
     get '/' do
       @css = File.open(settings.root + "/public/assets/font-face.css", "rb").read
@@ -52,12 +51,20 @@ module FontDownloader
         t = Tempfile.new(target_dir_name)
 
         # Add fontfiles to tempfile
-        Zip::OutputStream.open(t.path) do |z|
-          Download::run(params[:url], z)
-        end
+        # Zip::OutputStream.open(t.path) do |z|
+        #   # Download::run(params[:url], z)
+        #   Download::run(params[:url], t)
+        # end
+
+        # Download::run(params[:url], t.path)
+        zip = Download.new(params[:url], t.path)
+puts zip.run
 
         # Send tempfile to user
-        send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => "fonts-#{target_dir_name}.zip"
+        send_file t.path, 
+          :type => 'application/zip', 
+          :disposition => 'attachment', 
+          :filename => "fonts-#{target_dir_name}.zip"
       
       ensure
         t.close
