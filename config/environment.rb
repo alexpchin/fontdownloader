@@ -24,10 +24,8 @@ require 'url-resolver'
 
 require 'nokogiri'
 require 'sprockets'
-require 'yui-compressor'
+require 'yui/compressor'
 require 'coffee-script'
-require 'sass'
-require 'haml'
 require 'sass'
 require 'haml'
 
