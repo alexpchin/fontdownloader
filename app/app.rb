@@ -48,8 +48,8 @@ module FontDownloader
         directory   = Directory.new
         stylesheets = StylesheetUrls.new(params[:url]).stylesheets
         font_urls   = FontUrls.new(params[:url], stylesheets).font_urls
-        fonts       = font_urls.map { |url| Font.new(url, directory.path) }
-        # fonts       = font_urls[0...1].map { |url| Font.new(url, directory.path) }
+        # fonts       = font_urls.map { |url| Font.new(url, directory.path) }
+        fonts       = font_urls[0...5].map { |url| Font.new(url, directory.path) }
 
         # Create unique(ish) filename using datetime and hex
         target_dir_name = "#{Date.today.strftime('%y%m%d')}-#{SecureRandom.hex}"
@@ -58,7 +58,6 @@ puts "Tempfile: #{tempfile.path}"
 
         # Add fontfiles to tempfile
         Zip::OutputStream.open(tempfile.path) do |z|
-
           fonts.each do |font|
             # Create a new entry with some arbitrary name
 puts "Filename: #{font.filename}"
