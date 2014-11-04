@@ -19,8 +19,8 @@ module FontDownloader
 
         # Compress everything in production
         if ENV["RACK_ENV"] == "production"
-          env.js_compressor  = FontDownloader::App::YUI::JavaScriptCompressor.new
-          env.css_compressor = FontDownloader::App::YUI::CssCompressor.new
+          env.js_compressor  = YUI::JavaScriptCompressor.new
+          env.css_compressor = YUI::CssCompressor.new
         end
       })
 
