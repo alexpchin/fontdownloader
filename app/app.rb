@@ -44,31 +44,31 @@ module FontDownloader
 
     post '/' do
       begin
-        # Create unique(ish) filename using datetime and hex
-        target_dir_name = "#{Date.today.strftime('%y%m%d')}-#{SecureRandom.hex}"
-
-        tempfile    = Tempfile.new(target_dir_name)
+        
+        directory   = Directory.new
         stylesheets = StylesheetUrls.new(params[:url]).stylesheets
         font_urls   = FontUrls.new(params[:url], stylesheets).font_urls
-puts font_urls.inspect
+        # fonts       = font_urls.map { |url| Font.new(url, directory.path) }
+        fonts       = font_urls[0...1].map { |url| Font.new(url, directory.path) }
 
+        # Create unique(ish) filename using datetime and hex
+        target_dir_name = "#{Date.today.strftime('%y%m%d')}-#{SecureRandom.hex}"
+        tempfile    = Tempfile.new(target_dir_name)
+puts "Tempfile: #{tempfile.path}"
 
-        # # Add fontfiles to tempfile
-        # Zip::OutputStream.open(t.path) do |z|
-        #   some_file_list.each do |file|
-        #     # Create a new entry with some arbitrary name
-        #     zos.put_next_entry("some-funny-name.jpg")
-        #     # Add the contents of the file, don't read the stuff linewise if its binary, instead use direct IO
-        #     zos.print IO.read(file.path)
-        #   end
-
-        #   z.put_next_entry("some-funny-name.jpg")
-        #   Download::run(params[:url], t)
-        # end
-
-        # # Download::run(params[:url], t.path)
-        # fonts = Download.new(params[:url], t.path)
-        # fonts.run
+        # Add fontfiles to tempfile
+        Zip::OutputStream.open(tempfile.path) do |z|
+          fonts.each do |font|
+            # Create a new entry with some arbitrary name
+puts "Filename: #{font.filename}"
+            z.put_next_entry(font.filename)
+            # Add the contents of the file
+            # Don't read the stuff linewise if its binary, instead use direct IO
+puts "Filepath: #{font.filepath}"
+            z.print IO.read(font.filepath)
+            # z.print IO.read(File.expand_path(font.filepath, __FILE__)) 
+          end
+        end
 
         # Send tempfile to user
         send_file tempfile.path, 
@@ -78,6 +78,7 @@ puts font_urls.inspect
       
       ensure
         tempfile.close
+        # tempfile.unlink
       end
 
       flash[:notice] = "Thanks for using Font Downloader."
