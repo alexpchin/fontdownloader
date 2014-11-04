@@ -79,7 +79,6 @@ puts "Filepath: #{font.filepath}"
       ensure
         # Throwing error: NoMethodError - undefined method `close' for nil:NilClass:
         tempfile.close if tempfile
-        # tempfile.unlink
       end
 
       flash[:notice] = "Thanks for using Font Downloader."

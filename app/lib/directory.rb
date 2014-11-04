@@ -21,7 +21,9 @@ module FontDownloader
 
     def create
       unless File.exists?(path)
+        # Throwing an error on Heroku
         Dir.mkdir(path)
+        # Dir.mktmpdir(path)
       else
         puts "Skipping creating directory #{path}. It already exists."
       end
