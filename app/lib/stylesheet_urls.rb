@@ -11,8 +11,6 @@ module FontDownloader
     def extract
       doc = extract_head
       extract_stylesheets_from_head(doc)
-      # stylesheets = extract_stylesheets_from_head(doc)
-      # raise ArgumentError, "There are no stylesheets." if stylesheets.nil?
     end
 
     def extract_head

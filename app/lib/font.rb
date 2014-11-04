@@ -6,6 +6,7 @@ module FontDownloader
     def initialize(url, dirpath)
       @url       = set_url(url)
       @dirpath   = dirpath
+      @fontname  = set_fontname
       @filename  = set_filename
       @filepath  = set_filepath
       @extension = set_extension 
@@ -22,9 +23,12 @@ module FontDownloader
       end
     end
 
-    def set_filename
-      # File.basename(url, File.extname(url))
+    def set_fontname
       File.basename(url)
+    end
+
+    def set_filename
+      File.basename(url)[/(?:(?!\?|#).)*/]
     end
 
     def set_filepath

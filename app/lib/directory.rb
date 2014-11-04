@@ -10,6 +10,8 @@ module FontDownloader
     end
 
     def set_name
+      # Working on new strategy for saving url as name
+      # url.sub!(/^https?\:\/\/(www.)?/,'')[/[^\/]*/]
       "#{Date.today.strftime('%y%m%d')}-#{SecureRandom.hex}"
     end
 
