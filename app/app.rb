@@ -77,7 +77,8 @@ puts "Filepath: #{font.filepath}"
           :filename => "fonts-#{target_dir_name}.zip"
       
       ensure
-        tempfile.close
+        # Throwing error: NoMethodError - undefined method `close' for nil:NilClass:
+        tempfile.close if tempfile
         # tempfile.unlink
       end
 
