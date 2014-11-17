@@ -53,43 +53,19 @@ module FontDownloader
         stylesheets = StylesheetUrls.new(params[:url]).stylesheets
         font_urls   = FontUrls.new(params[:url], stylesheets).font_urls
         # fonts       = font_urls.map { |url| Font.new(url, directory.path) }
-        
-        fonts       = font_urls[0...2].map do |url| 
-
-          tmp = Tempfile.new(File.basename(url))
-          tmp << Font.new(url, directory.path) 
-
-        end
-
-        tempfile    = Tempfile.new(target_dir_name)
-puts "Tempfile: #{tempfile.path}"
-
-        fonts.each do |font|
-puts "Filepath: #{font.path}"
-          # IO.read(font.filepath)
-File.exist?(font.path)
-          # File.read(font.filepath)
-        end
+        fonts       = font_urls[0...15].map { |url| Font.new(url, directory.path) }
 
         # Add fontfiles to tempfile
+        tempfile    = Tempfile.new(target_dir_name)
         Zip::OutputStream.open(tempfile.path) do |z|
 
           fonts.each do |font|
+puts "Filename: #{font.filename}"
 
-            if File.exist?(font.path)
+            # Create a new entry with the name of the font
+            z.put_next_entry("fonts/#{font.filename}")
+            z.print IO.read(font.create_tempfile.path)
 
-              # Create a new entry with some arbitrary name
-  puts "Filename: #{font.filename}"
-              z.put_next_entry("fonts/#{font.filename}")
-              # Add the contents of the file
-              # Don't read the stuff linewise if its binary, instead use direct IO
-  puts "Directory: #{directory.path}"
-  puts "Filepath: #{font.filepath}"
-              z.print IO.read(font.path)
-              # z.print IO.read(File.expand_path(font.filepath, __FILE__)) 
-              # z.print IO.read(file)
-
-            end 
           end
         end
 
@@ -98,7 +74,7 @@ File.exist?(font.path)
           :type => 'application/zip', 
           :disposition => 'attachment', 
           :filename => "fonts-#{target_dir_name}.zip"
-      
+
       ensure
         # Throwing error: NoMethodError - undefined method `close' for nil:NilClass:
         tempfile.close if tempfile

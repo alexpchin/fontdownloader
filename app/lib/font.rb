@@ -11,7 +11,10 @@ module FontDownloader
       @filepath  = set_filepath
       @extension = set_extension 
       @basename  = set_basename
-      download
+    end
+
+    def create_tempfile
+      Tempfile.new(filename) << download
     end
 
     def set_url(url)
