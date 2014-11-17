@@ -30,11 +30,6 @@ require 'sass'
 require 'haml'
 
 require 'carrierwave'
-require 'sidekiq/web'
-require 'redis'
-# require 'autoscaler'
-# require 'autoscaler/sidekiq'
-# require 'autoscaler/heroku_scaler'
 
 require 'mandrill'
 
@@ -48,25 +43,6 @@ Dir[APP_ROOT.join('app', '*.rb')].each { |file| require file }
 # Set up the classes
 Dir[APP_ROOT.join('app', 'lib', '*.rb')].each { |file| require file }
 
-# # Setup Sidekiq
-Sidekiq.configure_client do |config|
-  config.redis = { 
-    size: 1
-  }
-end
-
-# Sidekiq.configure_client do |config|
-#   config.client_middleware do |chain|
-#     chain.add Autoscaler::Sidekiq::Client, 'default' => Autoscaler::HerokuScaler.new
-#   end
-# end
-
-# Sidekiq.configure_server do |config|
-#   config.server_middleware do |chain|
-#     chain.add(Autoscaler::Sidekiq::Server, Autoscaler::HerokuScaler.new, 60)
-#   end
-# end
-
 # Setup carrierwave
 CarrierWave.configure do |config|
   config.fog_credentials = {
@@ -76,9 +52,6 @@ CarrierWave.configure do |config|
   }
   config.fog_directory  = ENV['AWS_BUCKET_FONTDOWNLOADER']
 end
-
-# Set up the sidekiq workers
-Dir[APP_ROOT.join('app', 'workers', '*.rb')].each { |file| require file }
 
 # Set up the uploaders
 Dir[APP_ROOT.join('app', 'uploaders', '*.rb')].each { |file| require file }
