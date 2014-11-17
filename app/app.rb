@@ -48,7 +48,6 @@ module FontDownloader
         # Create unique(ish) filename using datetime and hex
         target_dir_name = "#{Date.today.strftime('%y%m%d')}-#{SecureRandom.hex}"
 
-        # directory   = Directory.new
         directory   = Tempfile.new(target_dir_name)
         stylesheets = StylesheetUrls.new(params[:url]).stylesheets
         font_urls   = FontUrls.new(params[:url], stylesheets).font_urls
