@@ -14,7 +14,6 @@ gem 'css_parser'
 
 # Zip files
 gem 'rubyzip'
-# gem 'downspout'
 gem 'carrierwave'
 # gem 'aws-sdk'
 gem 'fog'
@@ -28,19 +27,9 @@ gem 'coffee-script'
 gem 'sass'
 gem 'haml'
 
-# Sidekiq
-gem 'sidekiq'
-gem 'sidekiq-failures'
-gem 'redis'
-# gem 'heroku-api'
-# gem 'autoscaler'
-
 # Sinatra flash
 gem 'sinatra-flash'
 gem 'sinatra-redirect-with-flash'
-
-# Mandrill
-gem 'mandrill-api'
 
 group :test, :development do
   gem 'pry'
