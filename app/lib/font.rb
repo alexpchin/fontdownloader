@@ -44,7 +44,7 @@ module FontDownloader
     end
 
     def download
-      Dir.chdir(dirpath)
+      # Dir.chdir(dirpath)
       unless File.exists?(filename)
         download_resource
       else
@@ -76,11 +76,14 @@ module FontDownloader
           http.request request do |response|
 
             # Writes the file, needs to include extension
-            open filename, 'w' do |io|
-              response.read_body do |chunk|
-                io.write chunk
-              end
-            end
+            # open filename, 'w' do |io|
+            #   response.read_body do |chunk|
+            #     io.write chunk
+            #   end
+            # end
+
+            # Return the file body
+            response.read_body
           end
         end
       rescue Exception => e
