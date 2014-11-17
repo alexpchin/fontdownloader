@@ -47,15 +47,15 @@ module FontDownloader
         
         # Create unique(ish) filename using datetime and hex
         target_dir_name = "#{Date.today.strftime('%y%m%d')}-#{SecureRandom.hex}"
-
         directory   = Tempfile.new(target_dir_name)
+
         stylesheets = StylesheetUrls.new(params[:url]).stylesheets
         font_urls   = FontUrls.new(params[:url], stylesheets).font_urls
         # fonts       = font_urls.map { |url| Font.new(url, directory.path) }
         fonts       = font_urls[0...15].map { |url| Font.new(url, directory.path) }
 
         # Add fontfiles to tempfile
-        tempfile    = Tempfile.new(target_dir_name)
+        tempfile    = Tempfile.new("foo")
         Zip::OutputStream.open(tempfile.path) do |z|
 
           fonts.each do |font|
@@ -63,6 +63,8 @@ puts "Filename: #{font.filename}"
 
             # Create a new entry with the name of the font
             z.put_next_entry("fonts/#{font.filename}")
+
+            # Create a tempfile and read the contents
             z.print IO.read(font.create_tempfile.path)
 
           end
@@ -72,10 +74,9 @@ puts "Filename: #{font.filename}"
         send_file tempfile.path, 
           :type => 'application/zip', 
           :disposition => 'attachment', 
-          :filename => "fonts-#{target_dir_name}.zip"
+          :filename => "fonts.zip"
 
       ensure
-        # Throwing error: NoMethodError - undefined method `close' for nil:NilClass:
         tempfile.close if tempfile
       end
 
