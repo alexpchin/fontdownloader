@@ -61,7 +61,7 @@ module FontDownloader
       when /ftp/
         ftp_download_uri(uri)
       else
-        puts "Unsupported URI scheme for resource " + filename + "."
+        puts "Unsupported URI scheme for resource " + filename
       end
     end
 
@@ -87,11 +87,11 @@ module FontDownloader
         puts "=> Exception: '#{e}'. Skipping download."
         return
       end
-      puts "Stored download as " + filename + "."
+      puts "Stored download as " + filename
     end
 
     def ftp_download_uri(uri)
-      puts "Starting FTP download for: " + uri.to_s + "."
+      puts "Starting FTP download for: " + uri.to_s
       begin
         Net::FTP.open(uri.host) do |ftp|
           ftp.login

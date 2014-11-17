@@ -49,7 +49,7 @@ module FontDownloader
         stylesheets = StylesheetUrls.new(params[:url]).stylesheets
         font_urls   = FontUrls.new(params[:url], stylesheets).font_urls
         # fonts       = font_urls.map { |url| Font.new(url, directory.path) }
-        fonts       = font_urls[0...5].map { |url| Font.new(url, directory.path) }
+        fonts       = font_urls[0...15].map { |url| Font.new(url, directory.path) }
 
         # Create unique(ish) filename using datetime and hex
         target_dir_name = "#{Date.today.strftime('%y%m%d')}-#{SecureRandom.hex}"
