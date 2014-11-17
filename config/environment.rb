@@ -20,7 +20,6 @@ require 'zip'
 require 'tmpdir'
 require 'tempfile'
 require 'url-resolver'
-# require 'downspout'
 
 require 'nokogiri'
 require 'sprockets'
