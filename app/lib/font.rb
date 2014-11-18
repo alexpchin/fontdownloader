@@ -19,7 +19,7 @@ module FontDownloader
 
     def set_url(url)
       url = url.strip
-      if url == nil || url.length == 0
+      if url.blank?
         raise ArgumentError, "Incorrectly formatted url given." 
       else
         url
@@ -47,7 +47,6 @@ module FontDownloader
     end
 
     def download
-      # Dir.chdir(dirpath)
       unless File.exists?(filename)
         download_resource
       else
@@ -75,6 +74,9 @@ module FontDownloader
       begin
         http_object.start do |http|
           request = Net::HTTP::Get.new uri.request_uri
+puts uri.request_uri
+puts request
+
           http.read_timeout = 500
           http.request request do |response|
 
@@ -85,8 +87,10 @@ module FontDownloader
             #   end
             # end
 
+# puts response.read_body
             # Return the file body
             response.read_body
+
 
             # response.read_body do |chunk|
             #   io.write chunk

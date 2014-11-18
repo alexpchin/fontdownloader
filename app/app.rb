@@ -58,15 +58,15 @@ puts "Filename: #{font.filename}"
             z.put_next_entry("fonts/#{font.filename}")
 
             # Create a tempfile and read the contents
-            font = Tempfile.new(font.filename) << font.download
+            output_file = Tempfile.new(font.filename) << font.download
 
 puts "Download: #{font.download}"
-puts "Tempfile: #{font}"
-puts "Size: #{font.size}"
-puts "File exists? #{File.exists?(font)}"
+puts "Tempfile: #{output_file}"
+puts "Size: #{output_file.size}"
+puts "File exists? #{File.exists?(output_file)}"
 
             # Read tempfile and print into zip
-            z.print IO.read(font.path)
+            z.print IO.read(output_file.path)
 
           end
         end
