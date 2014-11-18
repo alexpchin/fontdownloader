@@ -13,9 +13,9 @@ module FontDownloader
       @basename  = set_basename
     end
 
-    def create_tempfile
-      Tempfile.new(filename) << download
-    end
+    # def create_tempfile
+    #   Tempfile.new(filename) << download
+    # end
 
     def set_url(url)
       url = url.strip
@@ -86,11 +86,11 @@ module FontDownloader
             # end
 
             # Return the file body
-            # response.read_body
+            response.read_body
 
-            response.read_body do |chunk|
-              io.write chunk
-            end
+            # response.read_body do |chunk|
+            #   io.write chunk
+            # end
 
           end
         end

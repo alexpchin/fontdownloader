@@ -17,7 +17,7 @@ require 'sinatra/xsendfile'
 
 require 'securerandom'
 require 'zip'
-require 'tmpdir'
+# require 'tmpdir'
 require 'tempfile'
 require 'url-resolver'
 
