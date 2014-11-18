@@ -59,7 +59,6 @@ puts "Filename: #{font.filename}"
 
             # Create a tempfile and read the contents
             output_file = Tempfile.new(font.filename) << font.download
-
 puts "Download: #{font.download}"
 puts "Tempfile: #{output_file}"
 puts "Size: #{output_file.size}"
