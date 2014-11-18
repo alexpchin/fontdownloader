@@ -19,7 +19,7 @@ module FontDownloader
 
     def set_url(url)
       url = url.strip
-      if url.blank?
+      if url.nil? || url.empty?
         raise ArgumentError, "Incorrectly formatted url given." 
       else
         url
@@ -74,35 +74,16 @@ module FontDownloader
       begin
         http_object.start do |http|
           request = Net::HTTP::Get.new uri.request_uri
-puts uri.request_uri
-puts request
-
           http.read_timeout = 500
           http.request request do |response|
-
-            # Writes the file, needs to include extension
-            # open filename, 'w' do |io|
-            #   response.read_body do |chunk|
-            #     io.write chunk
-            #   end
-            # end
-
-# puts response.read_body
-            # Return the file body
+puts "Stored download as " + filename
             response.read_body
-
-
-            # response.read_body do |chunk|
-            #   io.write chunk
-            # end
-
           end
         end
       rescue Exception => e
         puts "=> Exception: '#{e}'. Skipping download."
         return
       end
-      puts "Stored download as " + filename
     end
 
     # def ftp_download_uri(uri)
