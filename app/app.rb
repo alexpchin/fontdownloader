@@ -54,6 +54,8 @@ module FontDownloader
         # fonts       = font_urls.map { |url| Font.new(url, directory.path) }
         fonts       = font_urls[0...15].map { |url| Font.new(url, directory.path) }
 
+        # fonts = Download.new(params[:url]).fonts
+
         # Add fontfiles to tempfile
         tempfile    = Tempfile.new("foo")
         Zip::OutputStream.open(tempfile.path) do |z|
