@@ -45,20 +45,25 @@ module FontDownloader
     post '/' do
       begin
     
-        fonts = Download.new(params[:url]).fonts
+        download = Download.new(params[:url])
 
         # Add fontfiles to tempfile
         tempfile    = Tempfile.new("foo")
         Zip::OutputStream.open(tempfile.path) do |z|
 
-          fonts.each do |font|
+          download.fonts.each do |font|
 puts "Filename: #{font.filename}"
 
             # Create a new entry with the name of the font
             z.put_next_entry("fonts/#{font.filename}")
 
             # Create a tempfile and read the contents
-            z.print IO.read(font.create_tempfile.path)
+            font = font.create_tempfile
+puts "Tempfile: #{font}"
+puts "File exists? #{File.exists?(font)}"
+
+            # Read tempfile and print into zip
+            z.print IO.read(font.path)
 
           end
         end

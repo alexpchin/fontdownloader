@@ -77,9 +77,21 @@ module FontDownloader
           request = Net::HTTP::Get.new uri.request_uri
           http.read_timeout = 500
           http.request request do |response|
+
+            # Writes the file, needs to include extension
+            # open filename, 'w' do |io|
+            #   response.read_body do |chunk|
+            #     io.write chunk
+            #   end
+            # end
+
             # Return the file body
             # response.read_body
-            response
+
+            response.read_body do |chunk|
+              io.write chunk
+            end
+
           end
         end
       rescue Exception => e

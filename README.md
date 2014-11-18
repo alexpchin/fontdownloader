@@ -33,3 +33,5 @@ Things are shifting heavily toward WOFF though, so you can probably get away wit
        url('myfont.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
 }
 ```
+
+<!-- Run with  bundle exec guard -->

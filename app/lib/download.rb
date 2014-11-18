@@ -28,8 +28,8 @@ module FontDownloader
     end
 
     def gather_fonts
+      font_urls[0...1].map { |url| Font.new(url, directory.path) }
       # font_urls.map { |url| Font.new(url, directory.path) }
-      font_urls[0...15].map { |url| Font.new(url, directory.path) }
     end
     
   end
