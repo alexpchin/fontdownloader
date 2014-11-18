@@ -28,8 +28,6 @@ require 'coffee-script'
 require 'sass'
 require 'haml'
 
-require 'carrierwave'
-
 # Some helper constants for path-centric logic
 APP_ROOT = Pathname.new(File.expand_path('../../', __FILE__))
 APP_NAME = APP_ROOT.basename.to_s
@@ -39,19 +37,6 @@ Dir[APP_ROOT.join('app', '*.rb')].each { |file| require file }
 
 # Set up the classes
 Dir[APP_ROOT.join('app', 'lib', '*.rb')].each { |file| require file }
-
-# Setup carrierwave
-CarrierWave.configure do |config|
-  config.fog_credentials = {
-    :provider               => 'AWS',
-    :aws_access_key_id      => ENV['AWS_ACCESS_KEY_ID'],
-    :aws_secret_access_key  => ENV['AWS_SECRET_ACCESS_KEY'],
-  }
-  config.fog_directory  = ENV['AWS_BUCKET_FONTDOWNLOADER']
-end
-
-# Set up the uploaders
-Dir[APP_ROOT.join('app', 'uploaders', '*.rb')].each { |file| require file }
 
 # Set up the database and models
 # require APP_ROOT.join('config', 'database')

@@ -14,9 +14,6 @@ gem 'css_parser'
 
 # Zip files
 gem 'rubyzip'
-gem 'carrierwave'
-# gem 'aws-sdk'
-gem 'fog'
 gem 'url-resolver'
 gem 'sinatra-xsendfile'
 
