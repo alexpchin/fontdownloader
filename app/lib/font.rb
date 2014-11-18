@@ -81,8 +81,8 @@ puts "Stored download as " + filename
           end
         end
       rescue Exception => e
-        puts "=> Exception: '#{e}'. Skipping download."
-        return
+puts "=> Exception: '#{e}'. Skipping download."
+        raise e
       end
     end
 
