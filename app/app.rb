@@ -44,17 +44,8 @@ module FontDownloader
 
     post '/' do
       begin
-        
-        # Create unique(ish) filename using datetime and hex
-        target_dir_name = "#{Date.today.strftime('%y%m%d')}-#{SecureRandom.hex}"
-        directory   = Tempfile.new(target_dir_name)
-
-        stylesheets = StylesheetUrls.new(params[:url]).stylesheets
-        font_urls   = FontUrls.new(params[:url], stylesheets).font_urls
-        # fonts       = font_urls.map { |url| Font.new(url, directory.path) }
-        fonts       = font_urls[0...15].map { |url| Font.new(url, directory.path) }
-
-        # fonts = Download.new(params[:url]).fonts
+    
+        fonts = Download.new(params[:url]).fonts
 
         # Add fontfiles to tempfile
         tempfile    = Tempfile.new("foo")

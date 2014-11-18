@@ -61,8 +61,8 @@ module FontDownloader
       case uri.scheme.downcase
       when /http|https/
         http_download_uri(uri)
-      when /ftp/
-        ftp_download_uri(uri)
+      # when /ftp/
+      #   ftp_download_uri(uri)
       else
         puts "Unsupported URI scheme for resource " + filename
       end
@@ -77,16 +77,9 @@ module FontDownloader
           request = Net::HTTP::Get.new uri.request_uri
           http.read_timeout = 500
           http.request request do |response|
-
-            # Writes the file, needs to include extension
-            # open filename, 'w' do |io|
-            #   response.read_body do |chunk|
-            #     io.write chunk
-            #   end
-            # end
-
             # Return the file body
-            response.read_body
+            # response.read_body
+            response
           end
         end
       rescue Exception => e
@@ -96,20 +89,20 @@ module FontDownloader
       puts "Stored download as " + filename
     end
 
-    def ftp_download_uri(uri)
-      puts "Starting FTP download for: " + uri.to_s
-      begin
-        Net::FTP.open(uri.host) do |ftp|
-          ftp.login
-          ftp.chdir(dirpath)
-          ftp.getbinaryfile(basename)
-        end
-      rescue Exception => e
-        puts "=> Exception: '#{e}'. Skipping download."
-        return
-      end
-      puts "Stored download as " + filename + "."
-    end
+    # def ftp_download_uri(uri)
+    #   puts "Starting FTP download for: " + uri.to_s
+    #   begin
+    #     Net::FTP.open(uri.host) do |ftp|
+    #       ftp.login
+    #       ftp.chdir(dirpath)
+    #       ftp.getbinaryfile(basename)
+    #     end
+    #   rescue Exception => e
+    #     puts "=> Exception: '#{e}'. Skipping download."
+    #     return
+    #   end
+    #   puts "Stored download as " + filename + "."
+    # end
 
   end
 
