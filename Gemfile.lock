@@ -20,6 +20,8 @@ GEM
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
       json (>= 1.7)
+    celluloid (0.16.0)
+      timers (~> 4.0.0)
     coderay (1.1.0)
     coffee-script (2.3.0)
       coffee-script-source
@@ -31,6 +33,7 @@ GEM
     debugger-linecache (1.2.0)
     excon (0.40.0)
     execjs (2.2.1)
+    ffi (1.9.6)
     fog (1.24.0)
       fog-brightbox
       fog-core (~> 1.23)
@@ -67,13 +70,36 @@ GEM
       fog-core
       nokogiri (~> 1.5, >= 1.5.11)
     formatador (0.2.5)
+    guard (2.8.2)
+      formatador (>= 0.2.4)
+      listen (~> 2.7)
+      lumberjack (~> 1.0)
+      pry (>= 0.9.12)
+      thor (>= 0.18.1)
+    guard-bundler (2.0.0)
+      bundler (~> 1.0)
+      guard (~> 2.2)
+    guard-rack (2.0.0)
+      ffi
+      guard (~> 2.3)
+      libnotify
+      rb-inotify
+      spoon
     haml (4.0.5)
       tilt
     hike (1.2.3)
+    hitimes (1.2.2)
     i18n (0.6.11)
     inflecto (0.0.2)
     ipaddress (0.8.0)
     json (1.8.1)
+    libnotify (0.8.4)
+      ffi (>= 1.0.11)
+    listen (2.8.0)
+      celluloid (>= 0.15.2)
+      rb-fsevent (>= 0.9.3)
+      rb-inotify (>= 0.9)
+    lumberjack (1.0.9)
     method_source (0.8.2)
     mime-types (2.4.1)
     mini_portile (0.6.0)
@@ -95,6 +121,9 @@ GEM
     rack-protection (1.5.3)
       rack
     rake (10.3.2)
+    rb-fsevent (0.9.4)
+    rb-inotify (0.9.5)
+      ffi (>= 0.5.0)
     rubyzip (1.1.6)
     sass (3.4.5)
     sinatra (1.4.5)
@@ -108,13 +137,18 @@ GEM
     sinatra-xsendfile (0.4.2)
       sinatra (>= 0.9.1)
     slop (3.6.0)
+    spoon (0.0.4)
+      ffi
     sprockets (2.12.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
+    thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
+    timers (4.0.1)
+      hitimes
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     url-resolver (0.0.1)
@@ -128,6 +162,9 @@ DEPENDENCIES
   coffee-script
   css_parser
   fog
+  guard
+  guard-bundler
+  guard-rack
   haml
   nokogiri
   pry

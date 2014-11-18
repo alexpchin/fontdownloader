@@ -34,4 +34,7 @@ gem 'sinatra-redirect-with-flash'
 group :test, :development do
   gem 'pry'
   gem 'pry-byebug'
+  gem 'guard'
+  gem 'guard-bundler'
+  gem 'guard-rack'
 end
