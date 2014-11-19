@@ -6,10 +6,10 @@ module FontDownloader
     def initialize(url, stylesheets)
       @url         = url
       @stylesheets = stylesheets
-      @font_urls   = extract
+      @font_urls   = get_font_urls
     end
 
-    def extract
+    def get_font_urls
       stylesheets.map do |stylesheet| 
 
         css = return_css(stylesheet)
@@ -53,7 +53,6 @@ module FontDownloader
         array.flatten.map { |f| f if f[/.eot|.woff|.ttf|.svg/] }.compact if array.any?
       end
     end
-
   end
 
 end

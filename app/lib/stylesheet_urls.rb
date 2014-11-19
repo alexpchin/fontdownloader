@@ -5,22 +5,20 @@ module FontDownloader
 
     def initialize(url)
       @url = url
-      @stylesheets = extract
+      @stylesheets = get_stylesheets
     end
 
-    def extract
-      doc = extract_head
-      extract_stylesheets_from_head(doc)
+    def get_stylesheets
+      get_stylesheets_from_head(parse_head)
     end
 
-    def extract_head
+    def parse_head
       Nokogiri::HTML(open(url)).xpath("/html/head")
     end
 
-    def extract_stylesheets_from_head(doc)
+    def get_stylesheets_from_head(doc)
       doc.xpath('//link[@rel="stylesheet"]').map { |link| link['href'] }
     end
-
   end
 
 end

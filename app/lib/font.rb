@@ -1,23 +1,18 @@
 module FontDownloader
 
   class Font
-    attr_reader :url, :dirpath, :filename, :filepath, :extension, :basename
+    attr_reader :url, :filename, :extension, :basename
 
-    def initialize(url, dirpath)
-      @url       = set_url(url)
-      @dirpath   = dirpath
-      @fontname  = set_fontname
-      @filename  = set_filename
-      @filepath  = set_filepath
-      @extension = set_extension 
-      @basename  = set_basename
+    def initialize(url)
+      @url        = get_url(url)
+      @fontname   = get_fontname
+      @filename   = get_filename
+      @extension  = get_extension 
+      @basename   = get_basename
+      @datastring = download
     end
 
-    # def create_tempfile
-    #   Tempfile.new(filename) << download
-    # end
-
-    def set_url(url)
+    def get_url(url)
       url = url.strip
       if url.nil? || url.empty?
         raise ArgumentError, "Incorrectly formatted url given." 
@@ -26,35 +21,25 @@ module FontDownloader
       end
     end
 
-    def set_fontname
+    # Includes things after the extension name ?#iefix
+    def get_fontname
       File.basename(url)
     end
 
-    def set_filename
+    def get_filename
       File.basename(url)[/(?:(?!\?|#).)*/]
     end
 
-    def set_filepath
-      "#{dirpath}/#{filename}"
-    end
-
-    def set_basename
-      File.basename(url)
-    end
-
-    def set_extension
+    def get_extension
       File.extname(url)
     end
 
-    def download
-      unless File.exists?(filename)
-        download_resource
-      else
-        puts "Skipping download for " + filename + ". It already exists."
-      end
+    def get_basename
+      File.basename(url)
     end
 
-    def download_resource
+    # Used to use File.exists? but as only returning string now not checking dir.
+    def download
       uri = URI.parse(url)
 
       case uri.scheme.downcase
@@ -63,7 +48,7 @@ module FontDownloader
       # when /ftp/
       #   ftp_download_uri(uri)
       else
-        puts "Unsupported URI scheme for resource " + filename
+        raise ArgumentError, "Unsupported URI scheme for resource #{filename}"
       end
     end
 
@@ -71,17 +56,17 @@ module FontDownloader
       puts "Starting HTTP download for: " + uri.to_s
       http_object = Net::HTTP.new(uri.host, uri.port)
       http_object.use_ssl = true if uri.scheme == 'https'
+      
       begin
         http_object.start do |http|
           request = Net::HTTP::Get.new uri.request_uri
           http.read_timeout = 500
           http.request request do |response|
-puts "Stored download as " + filename
             response.read_body
           end
         end
       rescue Exception => e
-puts "=> Exception: '#{e}'. Skipping download."
+        # puts "=> Exception: '#{e}'. Skipping download."
         raise e
       end
     end
@@ -100,7 +85,6 @@ puts "=> Exception: '#{e}'. Skipping download."
     #   end
     #   puts "Stored download as " + filename + "."
     # end
-
   end
 
 end
