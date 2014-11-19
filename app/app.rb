@@ -43,42 +43,23 @@ module FontDownloader
     end
 
     post '/' do
-      begin
-    
-        download = Download.new(params[:url])
-
-        # Add fontfiles to tempfile
-        tempfile    = Tempfile.new("foo")
-
+      begin    
         # https://github.com/rubyzip/rubyzip/blob/master/samples/example.rb
         # http://www.devinterface.com/blog/en/2010/02/create-zip-files-on-the-fly/
-        # Zip::OutputStream.open(path)
+        # Zip::OutputStream.open(path).do |zos|
+        tempfile    = Tempfile.new("foo")
         Zip::OutputStream.open(tempfile.path) do |zos|
 
-          download.fonts.each do |font|
-# puts "Filename: #{font.filename}"
+          Download.new(params[:url]).fonts.each do |font|
+            # puts font.inspect
 
-            string = font.download
-puts string
-
-            if string.is_a? String
-              # Create a new entry with the name of the font
+            if !font.datastring.empty?
               zos.put_next_entry("fonts/#{font.filename}")
 
-              # Create a tempfile and read the contents
-              # output_file = Tempfile.new(font.filename) << font.download
-# puts "Download: #{font.download}"
-# puts "Tempfile: #{output_file}"
-## IOError at / closed stream
-# puts "Size: #{output_file.size}"
-# puts "File exists? #{File.exists?(output_file)}"
-
               # Read tempfile and streamed zip
-              # z.print IO.read(output_file.path)
-              # z.print font.download
-              zos.print string
+              # zos.print IO.read(output_file.path)
+              zos.print font.datastring
             end
-
           end
         end
 

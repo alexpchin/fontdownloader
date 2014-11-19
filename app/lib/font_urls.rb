@@ -10,9 +10,9 @@ module FontDownloader
     end
 
     def get_font_urls
-      stylesheets.map do |stylesheet| 
+      stylesheets.map do |stylesheet_url| 
 
-        css = return_css(stylesheet)
+        css = return_css(stylesheet_url)
         
         # Grab all @font-face declarations
         font_faces = css.scan(/@font-face[^}]*\}/)
@@ -22,14 +22,14 @@ module FontDownloader
         raise ArgumentError, "There are no fonts." if font_faces.nil?
 
         font_urls.uniq! if font_urls
-        font_urls.map { |file| UrlResolver.resolve(url, file) }    
+        font_urls.map { |href| URI.join(stylesheet_url, href).to_s }
 
       end.flatten
     end
 
     def return_css(stylesheet)
       # Resolve long url for stylesheet, //, http:// or relative
-      link = UrlResolver.resolve(url, stylesheet)
+      link = URI.join(url, stylesheet).to_s
 
       begin
         # Open stylesheet using Nokogiri & beautify/split css for regex

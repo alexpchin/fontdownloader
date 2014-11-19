@@ -7,7 +7,7 @@ module FontDownloader
       @url         = get_url(url)     #String
       @stylesheets = get_stylesheets  #Array of strings
       @font_urls   = get_font_urls    #Array of strings
-      @fonts       = get_fonts        #Array of strings
+      @fonts       = get_fonts        #Array of Font objects
     end
 
     def get_url(url)
@@ -28,7 +28,8 @@ module FontDownloader
     end
 
     def get_fonts
-      font_urls[0...1].map { |url| Font.new(url).datastring }
+      # font_urls[0...1].map { |url| Font.new(url) rescue nil }.compact
+      font_urls[0...1].map { |font_url| Font.new(font_url) }
     end
   end
 
