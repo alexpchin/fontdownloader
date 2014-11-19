@@ -14,7 +14,6 @@ gem 'css_parser'
 
 # Zip files
 gem 'rubyzip'
-gem 'url-resolver'
 gem 'sinatra-xsendfile'
 
 # Compression & display

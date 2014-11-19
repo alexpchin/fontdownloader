@@ -6,7 +6,6 @@ require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
 
 require 'sinatra/base'
 require 'uri' 
-require 'date' 
 require 'net/http' 
 require 'net/ftp' 
 require 'open-uri'
@@ -15,10 +14,8 @@ require 'sinatra/flash'
 require 'sinatra/redirect_with_flash'
 require 'sinatra/xsendfile'
 
-require 'securerandom'
 require 'zip'
 require 'tempfile'
-require 'url-resolver'
 
 require 'nokogiri'
 require 'sprockets'
