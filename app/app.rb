@@ -28,13 +28,13 @@ module FontDownloader
       enable :sessions 
     end
 
-    configure :production do
-      # Replace Sinatra's send_file with x_send_file
-      Sinatra::Xsendfile.replace_send_file!
+    # configure :production do
+    #   # Replace Sinatra's send_file with x_send_file
+    #   Sinatra::Xsendfile.replace_send_file!
 
-      # Set x_send_file header (default: X-SendFile)
-      set :xsf_header, 'X-Accel-Redirect'
-    end
+    #   # Set x_send_file header (default: X-SendFile)
+    #   set :xsf_header, 'X-Accel-Redirect'
+    # end
 
     get '/' do
       @css = File.open(settings.root + "/public/assets/font-face.css", "rb").read

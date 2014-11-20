@@ -43,6 +43,7 @@ module FontDownloader
       begin
         open(url) { |f| f.read }
       rescue Exception => e
+        puts "=> Exception: '#{e}'. Skipping download."
         raise e
       end
     end
