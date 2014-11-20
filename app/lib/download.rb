@@ -11,24 +11,25 @@ module FontDownloader
     end
 
     def get_url(url)
-      url = url.strip
       if url.nil? || url.empty?
         raise ArgumentError, "Incorrectly formatted url given." 
       else
-        url
+        url.strip
       end
     end
 
     def get_stylesheets
-      StylesheetUrls.new(url).stylesheets
+      StylesheetUrls.new(url).stylesheets rescue []
     end
 
     def get_font_urls
-      FontUrls.new(url, stylesheets).font_urls
+      FontUrls.new(url, stylesheets).font_urls rescue []
     end
 
     def get_fonts
-      font_urls.map { |font_url| Font.new(font_url) }.uniq
+      font_urls.map do |font_url| 
+        Font.new(font_url) rescue nil 
+      end.compact.uniq
     end
   end
 

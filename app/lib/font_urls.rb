@@ -17,6 +17,19 @@ module FontDownloader
       end.flatten
     end
 
+    def get_css(stylesheet)
+      # Resolve long url for stylesheet, //, http:// or relative
+      link = UrlResolver.resolve(url, stylesheet)
+puts link
+
+      begin
+        # Open stylesheet using Nokogiri & beautify/split css for regex
+        css = beautify_css(Nokogiri::HTML(open(link)).to_s)
+      rescue OpenURI::HTTPError => e
+        raise e
+      end
+    end
+
     def get_font_faces(css)
       # Find font faces
       css.scan(/@font-face[^}]*\}/)
@@ -25,19 +38,6 @@ module FontDownloader
     def get_font_url(font)
       # Anything between the url brackets
       font.scan(/(?:\(['|"]?)(.*?)(?:['|"]?\))/).flatten
-    end
-
-    def get_css(stylesheet)
-      # Resolve long url for stylesheet, //, http:// or relative
-      link = URI.join(url, stylesheet).to_s
-
-      begin
-        # Open stylesheet using Nokogiri & beautify/split css for regex
-        css = beautify_css(Nokogiri::HTML(open(link)).to_s)
-
-      rescue OpenURI::HTTPError => e
-        raise e
-      end
     end
 
     def beautify_css(string)
@@ -50,7 +50,8 @@ module FontDownloader
         get_font_url(font_face).map do |href|
 
           # Resolve relative paths and remove suffix, e.g. ?#iefix
-          URI.join(stylesheet_url, href).to_s[/[^\?\#!]+/] if href[/.eot|.woff|.ttf|.svg/]
+          # If it is a font, not format('embedded-opentype') etc
+          UrlResolver.resolve(stylesheet_url, href)[/[^\?\#!]+/] if href[/.eot|.woff|.ttf|.svg/]
         end
       end.flatten.compact.uniq
     end

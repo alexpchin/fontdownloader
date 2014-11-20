@@ -16,6 +16,7 @@ require 'sinatra/xsendfile'
 
 require 'zip'
 require 'tempfile'
+require 'url-resolver'
 
 require 'nokogiri'
 require 'sprockets'

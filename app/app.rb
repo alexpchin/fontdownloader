@@ -43,31 +43,33 @@ module FontDownloader
     end
 
     post '/' do
-      begin    
-        # https://github.com/rubyzip/rubyzip/blob/master/samples/example.rb
-        # http://www.devinterface.com/blog/en/2010/02/create-zip-files-on-the-fly/
-        tempfile    = Tempfile.new("foo")
-        Zip::OutputStream.open(tempfile.path) do |zos|
-          Download.new(params[:url]).fonts.each do |font|
-puts font.url
-            if !font.datastring.empty?
-              zos.put_next_entry("fonts/#{font.filename}")
-              zos.print font.datastring
+      begin
+        download = Download.new(params[:url])
+        if !download.fonts.empty?
+
+          # https://github.com/rubyzip/rubyzip/blob/master/samples/example.rb
+          # http://www.devinterface.com/blog/en/2010/02/create-zip-files-on-the-fly/
+          tempfile    = Tempfile.new("foo")
+          Zip::OutputStream.open(tempfile.path) do |zos|
+            download.fonts.each do |font|
+puts font.url # For terminal
+              if !font.datastring.empty?
+                zos.put_next_entry("fonts/#{font.filename}")
+                zos.print font.datastring
+              end
             end
           end
+          
+          send_file tempfile.path, 
+            :type => 'application/zip', 
+            :disposition => 'attachment', 
+            :filename => "fonts.zip"
         end
-
-        # Send tempfile to user
-        send_file tempfile.path, 
-          :type => 'application/zip', 
-          :disposition => 'attachment', 
-          :filename => "fonts.zip"
-
       ensure
         tempfile.close if tempfile
       end
 
-      flash[:notice] = "Thanks for using Font Downloader."
+      flash[:notice] = "A problem has occured or there were no fonts."
       redirect "/"
     end
 
