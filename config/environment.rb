@@ -12,7 +12,6 @@ require 'open-uri'
 
 require 'sinatra/flash'
 require 'sinatra/redirect_with_flash'
-require 'sinatra/xsendfile'
 
 require 'zip'
 require 'tempfile'

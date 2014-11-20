@@ -1,3 +1,6 @@
+# https://github.com/rubyzip/rubyzip/blob/master/samples/example.rb
+# http://www.devinterface.com/blog/en/2010/02/create-zip-files-on-the-fly/
+
 ## Other useful Redis commands
 # redis-cli shutdown
 # redis-server /usr/local/etc/redis.conf

@@ -2,7 +2,6 @@ module FontDownloader
   class App < Sinatra::Base
     register Sinatra::Flash
     helpers Sinatra::RedirectWithFlash
-    helpers Sinatra::Xsendfile
     
     configure do
       # Set the views location
@@ -28,14 +27,6 @@ module FontDownloader
       enable :sessions 
     end
 
-    # configure :production do
-    #   # Replace Sinatra's send_file with x_send_file
-    #   Sinatra::Xsendfile.replace_send_file!
-
-    #   # Set x_send_file header (default: X-SendFile)
-    #   set :xsf_header, 'X-Accel-Redirect'
-    # end
-
     get '/' do
       @css = File.open(settings.root + "/public/assets/font-face.css", "rb").read
       @woff = File.open(settings.root + "/public/assets/woff.css", "rb").read
@@ -47,15 +38,12 @@ module FontDownloader
         download = Download.new(params[:url])
         if !download.fonts.empty?
 
-          # https://github.com/rubyzip/rubyzip/blob/master/samples/example.rb
-          # http://www.devinterface.com/blog/en/2010/02/create-zip-files-on-the-fly/
           tempfile    = Tempfile.new("foo")
           Zip::OutputStream.open(tempfile.path) do |zos|
             download.fonts.each do |font|
 puts font.url # For terminal
               if !font.datastring.empty?
                 zos.put_next_entry("fonts/#{font.filename}")
-                # zos.print font.datastring
                 zos.write font.datastring
               end
             end
