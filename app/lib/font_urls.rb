@@ -12,22 +12,20 @@ module FontDownloader
     def get_font_urls
       stylesheets.map do |stylesheet_url| 
 
-        css = return_css(stylesheet_url)
-        
-        # Grab all @font-face declarations
-        font_faces = css.scan(/@font-face[^}]*\}/)
-        raise ArgumentError, "There are no fonts." if font_faces.nil?
-
-        font_urls = create_array_of_font_urls(font_faces).flatten
-        raise ArgumentError, "There are no fonts." if font_faces.nil?
-
-        font_urls.uniq! if font_urls
+        css        = get_css(stylesheet_url)
+        font_faces = get_font_faces(css)
+        font_urls  = create_array_of_font_urls(font_faces).flatten
+  
         font_urls.map { |href| URI.join(stylesheet_url, href).to_s }
 
       end.flatten
     end
 
-    def return_css(stylesheet)
+    def get_font_faces(css)
+      css.scan(/@font-face[^}]*\}/)
+    end
+
+    def get_css(stylesheet)
       # Resolve long url for stylesheet, //, http:// or relative
       link = URI.join(url, stylesheet).to_s
 
@@ -47,11 +45,11 @@ module FontDownloader
     def create_array_of_font_urls(font_faces)
       font_faces.map do |font|
 
-        # Anything between the brackets
+        # Anything between the url brackets
         array = font.scan(/(?:\(['|"]?)(.*?)(?:['|"]?\))/)
 
         array.flatten.map { |f| f if f[/.eot|.woff|.ttf|.svg/] }.compact if array.any?
-      end
+      end.uniq
     end
   end
 

@@ -29,7 +29,7 @@ module FontDownloader
 
     def get_fonts
       # font_urls[0...1].map { |url| Font.new(url) rescue nil }.compact
-      font_urls[0...1].map { |font_url| Font.new(font_url) }
+      font_urls[0...2].map { |font_url| Font.new(font_url) }
     end
   end
 

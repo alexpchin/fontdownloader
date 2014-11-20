@@ -17,7 +17,7 @@ module FontDownloader
     end
 
     def get_stylesheets_from_head(doc)
-      doc.xpath('//link[@rel="stylesheet"]').map { |link| link['href'] }
+      doc.xpath('//link[@rel="stylesheet"]').map { |link| link['href'] }.uniq
     end
   end
 

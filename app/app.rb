@@ -51,15 +51,15 @@ module FontDownloader
         Zip::OutputStream.open(tempfile.path) do |zos|
 
           Download.new(params[:url]).fonts.each do |font|
-            # puts font.inspect
+            puts font.inspect
 
-            if !font.datastring.empty?
-              zos.put_next_entry("fonts/#{font.filename}")
+            # if !font.datastring.empty?
+            #   zos.put_next_entry("fonts/#{font.filename}")
 
-              # Read tempfile and streamed zip
-              # zos.print IO.read(output_file.path)
-              zos.print font.datastring
-            end
+            #   # Read tempfile and streamed zip
+            #   # zos.print IO.read(output_file.path)
+            #   zos.print font.datastring
+            # end
           end
         end
 

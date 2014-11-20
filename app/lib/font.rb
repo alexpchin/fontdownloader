@@ -9,7 +9,7 @@ module FontDownloader
       @suffix     = get_suffix
       @filename   = get_filename
       @extension  = get_extension 
-      @datastring = download
+      # @datastring = download
     end
 
     def get_url(url)
