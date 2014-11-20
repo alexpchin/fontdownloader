@@ -27,6 +27,7 @@ gem 'haml'
 gem 'sinatra-flash'
 gem 'sinatra-redirect-with-flash'
 
+# Resolving URLs
 gem 'url-resolver'
 
 group :test, :development do
