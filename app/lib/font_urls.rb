@@ -11,18 +11,20 @@ module FontDownloader
 
     def get_font_urls
       stylesheets.map do |stylesheet_url| 
-
         css        = get_css(stylesheet_url)
         font_faces = get_font_faces(css)
-        font_urls  = create_array_of_font_urls(font_faces).flatten
-  
-        font_urls.map { |href| URI.join(stylesheet_url, href).to_s }
-
+        create_array_of_font_urls(font_faces, stylesheet_url).flatten
       end.flatten
     end
 
     def get_font_faces(css)
+      # Find font faces
       css.scan(/@font-face[^}]*\}/)
+    end
+
+    def get_font_url(font)
+      # Anything between the url brackets
+      font.scan(/(?:\(['|"]?)(.*?)(?:['|"]?\))/).flatten
     end
 
     def get_css(stylesheet)
@@ -42,14 +44,15 @@ module FontDownloader
       string.split(';').join('; ')
     end
 
-    def create_array_of_font_urls(font_faces)
-      font_faces.map do |font|
+    def create_array_of_font_urls(font_faces, stylesheet_url)
+      font_faces.map do |font_face|
+        # Look in the font_face string and find the font url
+        get_font_url(font_face).map do |href|
 
-        # Anything between the url brackets
-        array = font.scan(/(?:\(['|"]?)(.*?)(?:['|"]?\))/)
-
-        array.flatten.map { |f| f if f[/.eot|.woff|.ttf|.svg/] }.compact if array.any?
-      end.uniq
+          # Resolve relative paths and remove suffix, e.g. ?#iefix
+          URI.join(stylesheet_url, href).to_s[/[^\?\#!]+/] if href[/.eot|.woff|.ttf|.svg/]
+        end
+      end.flatten.compact.uniq
     end
   end
 
