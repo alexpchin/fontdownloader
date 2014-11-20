@@ -20,7 +20,7 @@ module FontDownloader
     def get_css(stylesheet)
       # Resolve long url for stylesheet, //, http:// or relative
       link = UrlResolver.resolve(url, stylesheet)
-puts link
+puts link # For terminal
 
       begin
         # Open stylesheet using Nokogiri & beautify/split css for regex

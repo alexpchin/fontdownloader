@@ -53,13 +53,15 @@ module FontDownloader
           Zip::OutputStream.open(tempfile.path) do |zos|
             download.fonts.each do |font|
 puts font.url # For terminal
+puts font.datastring
+puts " "
               if !font.datastring.empty?
                 zos.put_next_entry("fonts/#{font.filename}")
                 zos.print font.datastring
               end
             end
           end
-          
+
           send_file tempfile.path, 
             :type => 'application/zip', 
             :disposition => 'attachment', 
