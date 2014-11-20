@@ -28,9 +28,7 @@ module FontDownloader
     end
 
     def get_fonts
-      # font_urls[0...1].map { |font_url| Font.new(font_url) rescue nil }.compact
-puts font_urls.inspect
-      font_urls[0...2].map { |font_url| Font.new(font_url) }.uniq
+      font_urls.map { |font_url| Font.new(font_url) }.uniq
     end
   end
 

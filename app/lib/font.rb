@@ -5,8 +5,6 @@ module FontDownloader
 
     def initialize(url)
       @url        = get_url(url)
-      @fontname   = get_fontname
-      # @suffix     = get_suffix
       @filename   = get_filename
       @extension  = get_extension 
       @datastring = download
@@ -20,15 +18,6 @@ module FontDownloader
         url
       end
     end
-
-    # Includes things after the extension name ?#iefix
-    def get_fontname
-      File.basename(url)
-    end
-
-    # def get_suffix
-    #   fontname[/\?!\?|#(.*)/]
-    # end
 
     def get_filename
       File.basename(url)[/(?:(?!\?|#).)*/]
