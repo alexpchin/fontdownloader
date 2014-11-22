@@ -11,12 +11,8 @@ module FontDownloader
     end
 
     def get_url(url)
-      url = url.strip
-      if url.nil? || url.empty?
-        raise ArgumentError, "Incorrectly formatted url given." 
-      else
-        url
-      end
+      raise ArgumentError, "Incorrectly formatted url given." if url.nil? || url.empty?
+      url.strip!
     end
 
     def get_filename
@@ -30,10 +26,8 @@ module FontDownloader
     def download
       uri = URI.parse(url)
       case uri.scheme.downcase
-      when /http|https/
-        http_download_uri(uri)
-      when /ftp/
-        ftp_download_uri(uri)
+      when /http|https/ then http_download_uri(uri)
+      when /ftp/ then ftp_download_uri(uri)
       else
         raise ArgumentError, "Unsupported URI scheme for resource #{filename}"
       end

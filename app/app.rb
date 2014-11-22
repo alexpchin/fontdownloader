@@ -12,9 +12,9 @@ module FontDownloader
 
       # Setup assets
       set :assets, (Sprockets::Environment.new { |env|
-        env.append_path(settings.root + "/public/assets/images")
-        env.append_path(settings.root + "/public/assets/javascripts")
-        env.append_path(settings.root + "/public/assets/stylesheets")
+        ["images", "javascripts", "stylesheets"].each do |file|
+          env.append_path(settings.root + "/public/assets/#{file}")
+        end
 
         # Compress everything in production
         if ENV["RACK_ENV"] == "production"
