@@ -36,4 +36,5 @@ group :test, :development do
   gem 'guard'
   gem 'guard-bundler'
   gem 'guard-rack'
+  gem 'rack'
 end
