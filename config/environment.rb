@@ -9,6 +9,8 @@ require 'uri'
 require 'net/http' 
 require 'net/ftp' 
 require 'open-uri'
+require 'faraday'
+require 'faraday_middleware'
 
 require 'sinatra/flash'
 require 'sinatra/redirect_with_flash'
@@ -24,7 +26,7 @@ require 'coffee-script'
 require 'sass'
 require 'haml'
 
-require 'rack/test'
+# require 'rack/test'
 
 # Some helper constants for path-centric logic
 APP_ROOT = Pathname.new(File.expand_path('../../', __FILE__))

@@ -11,12 +11,16 @@ module FontDownloader
     end
 
     def get_url(url)
-      raise ArgumentError, "Incorrectly formatted url given." if url.nil? || url.empty?
-      url.strip!
+      if url.nil? || url.empty?
+        raise ArgumentError, "Incorrectly formatted url given." 
+      else
+        url.strip
+      end
     end
 
+    # Remove anything after the file extension
     def get_filename
-      File.basename(url)[/(?:(?!\?|#).)*/]
+      File.basename(url)[/(?:(?!\?|#).)*/] || File.basename(url)
     end
 
     def get_extension

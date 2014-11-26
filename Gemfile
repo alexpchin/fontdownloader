@@ -29,6 +29,8 @@ gem 'sinatra-redirect-with-flash'
 
 # Resolving URLs
 gem 'url-resolver'
+gem 'faraday'
+gem 'faraday_middleware'
 
 group :test, :development do
   gem 'pry'
