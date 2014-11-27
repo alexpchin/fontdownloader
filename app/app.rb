@@ -27,6 +27,11 @@ module FontDownloader
       enable :sessions 
     end
 
+    configure :development do
+      use BetterErrors::Middleware
+      BetterErrors.application_root = __dir__
+    end
+
     get '/' do
       @css = File.open(settings.root + "/public/assets/font-face.css", "rb").read
       @woff = File.open(settings.root + "/public/assets/woff.css", "rb").read

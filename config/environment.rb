@@ -27,6 +27,8 @@ require 'sass'
 require 'haml'
 
 # require 'rack/test'
+require 'better_errors'
+require 'binding_of_caller'
 
 # Some helper constants for path-centric logic
 APP_ROOT = Pathname.new(File.expand_path('../../', __FILE__))

@@ -39,4 +39,6 @@ group :test, :development do
   gem 'guard-bundler'
   gem 'guard-rack'
   gem 'rack'
+  gem 'better_errors'
+  gem 'binding_of_caller'
 end
